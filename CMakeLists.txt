@@ -33,9 +33,11 @@ if(DEF_PATH)
 endif()
 
 # see if git submodule is actually checked out
-if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/cmake4epics/cmake/FindEPICS.cmake)
-  list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake4epics/cmake)
+if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/cmake4epics/cmake/Modules/FindEPICS.cmake)
+  list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake4epics/cmake/Modules)
   set(TRY_EPICS 1)
+else()
+   message(STATUS "Skip EPICS check.  Checkout cmake4epics submodule")
 endif()
 
 find_package(Boost 1.52.0 REQUIRED COMPONENTS
