@@ -413,7 +413,7 @@ private:
         { return new Element(c); }
         void rebuild(ElementVoid *o, const Config& c, const size_t idx)
         {
-            std::auto_ptr<ElementVoid> N(build(c));
+            flame::auto_ptr<ElementVoid> N(build(c));
             Element *m = dynamic_cast<Element*>(o);
             if(!m)
                 throw std::runtime_error("reconfigure() can't change element type");

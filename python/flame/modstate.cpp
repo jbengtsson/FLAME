@@ -50,7 +50,7 @@ static
 void PyState_free(PyObject *raw)
 {
     TRY {
-        std::auto_ptr<StateBase> S(state->state);
+        flame::auto_ptr<StateBase> S(state->state);
         state->state = NULL;
 
         if(state->weak)
@@ -291,7 +291,7 @@ static
 PyObject* PyState_clone(PyObject *raw, PyObject *unused)
 {
     TRY {
-        std::auto_ptr<StateBase> newstate(state->state->clone());
+        flame::auto_ptr<StateBase> newstate(state->state->clone());
 
         PyObject *ret = wrapstate(newstate.get());
         newstate.release();

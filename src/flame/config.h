@@ -240,7 +240,7 @@ std::ostream& operator<<(std::ostream& strm, const Config& c)
 class GLPSParser
 {
     class Pvt;
-    std::auto_ptr<Pvt> priv;
+    flame::auto_ptr<Pvt> priv;
 public:
     //! Construct an empty parser context
     GLPSParser();

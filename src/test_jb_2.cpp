@@ -101,7 +101,7 @@ void propagate(const Config &conf)
 {
     // Propagate element-by-element for each charge state.
     Machine                  sim(conf);
-    std::auto_ptr<StateBase> state(sim.allocState());
+    flame::auto_ptr<StateBase> state(sim.allocState());
     state_t                  *StatePtr = dynamic_cast<state_t*>(state.get());
     std::ofstream            outf1, outf2, outf3;
 
@@ -147,7 +147,7 @@ void propagate(const Config &conf)
 int main(int argc, char *argv[])
 {
     try {
-        std::auto_ptr<Config> conf;
+        flame::auto_ptr<Config> conf;
 
         if(argc>2)
 

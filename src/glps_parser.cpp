@@ -8,6 +8,7 @@
 #include <sstream>
 
 #include "glps_parser.h"
+#include <flame/util.h>
 
 # define M_PI 3.14159265358979323846
 
@@ -128,8 +129,8 @@ void glps_strlist_cleanup(strlist_t* pval)
 
 kvlist_t* glps_append_kv(parse_context *ctxt, kvlist_t* L, kv_t* V)
 {
-    std::auto_ptr<string_t> SN(V->key);
-    std::auto_ptr<expr_t> EV(V->value);
+    flame::auto_ptr<string_t> SN(V->key);
+    flame::auto_ptr<expr_t> EV(V->value);
     if(!L) {
         try{
             L = new kvlist_t;
@@ -145,8 +146,8 @@ kvlist_t* glps_append_kv(parse_context *ctxt, kvlist_t* L, kv_t* V)
 strlist_t* glps_append_expr(parse_context *ctxt, strlist_t* list, expr_t *expr)
 {
     assert(expr);
-    std::auto_ptr<expr_t> E(expr);
-    std::auto_ptr<strlist_t> L(list);
+    flame::auto_ptr<expr_t> E(expr);
+    flame::auto_ptr<strlist_t> L(list);
 
     try{
         if(!L.get()) {
@@ -191,8 +192,8 @@ vector_t* glps_append_vector(parse_context *ctxt, vector_t *list, expr_t *expr)
 {
     assert(expr);
     try{
-        std::auto_ptr<expr_t> E(expr);
-        std::auto_ptr<vector_t> V(list);
+        flame::auto_ptr<expr_t> E(expr);
+        flame::auto_ptr<vector_t> V(list);
         if(!V.get())
             V.reset(new vector_t);
 
@@ -213,7 +214,7 @@ vector_t* glps_append_vector(parse_context *ctxt, vector_t *list, expr_t *expr)
 
 expr_t *glps_add_value(parse_context *ctxt, glps_expr_type t, ...)
 {
-    std::auto_ptr<expr_t> ret;
+    flame::auto_ptr<expr_t> ret;
     try {
         ret.reset(new expr_t);
         ret->etype = t;
@@ -228,7 +229,7 @@ expr_t *glps_add_value(parse_context *ctxt, glps_expr_type t, ...)
         case glps_expr_var:
         {
             string_t *name = va_arg(args, string_t*);
-            std::auto_ptr<string_t> SN(name);
+            flame::auto_ptr<string_t> SN(name);
 
             parse_context::map_idx_t::const_iterator it;
 
@@ -270,7 +271,7 @@ expr_t *glps_add_value(parse_context *ctxt, glps_expr_type t, ...)
         case glps_expr_string:
         {
             string_t *name = va_arg(args, string_t*);
-            std::auto_ptr<string_t> SN(name);
+            flame::auto_ptr<string_t> SN(name);
             assert(name);
             ret->value = name->str;
         }
@@ -319,8 +320,8 @@ std::string glps_describe_op(const operation_t* op)
 
 expr_t *glps_add_op(parse_context *ctxt, string_t *name, unsigned N, expr_t **args)
 {
-    std::auto_ptr<string_t> SN(name);
-    std::auto_ptr<expr_t> ret;
+    flame::auto_ptr<string_t> SN(name);
+    flame::auto_ptr<expr_t> ret;
     try{
 
         parse_context::operations_iterator_pair opit = ctxt->operations.equal_range(name->str);
@@ -388,8 +389,8 @@ void glps_assign(parse_context *ctxt, string_t *name, expr_t*value)
     assert(name);
     assert(value);
     try{
-        std::auto_ptr<string_t> SN(name);
-        std::auto_ptr<expr_t> VN(value);
+        flame::auto_ptr<string_t> SN(name);
+        flame::auto_ptr<expr_t> VN(value);
 
         bool ok = false;
         parse_var V;
@@ -427,8 +428,8 @@ void glps_assign(parse_context *ctxt, string_t *name, expr_t*value)
 
 void glps_add_element(parse_context *ctxt, string_t *label, string_t *etype, kvlist_t *P)
 {
-    std::auto_ptr<string_t> SL(label), SE(etype);
-    std::auto_ptr<kvlist_t> props(P);
+    flame::auto_ptr<string_t> SL(label), SE(etype);
+    flame::auto_ptr<kvlist_t> props(P);
     try{
         if(!P)
             props.reset(new kvlist_t);
@@ -450,9 +451,9 @@ void glps_add_element(parse_context *ctxt, string_t *label, string_t *etype, kvl
 
 void glps_add_line(parse_context *ctxt, string_t *label, string_t *etype, strlist_t *N)
 {
-    std::auto_ptr<string_t> SL(label), SE(etype);
+    flame::auto_ptr<string_t> SL(label), SE(etype);
     try{
-        std::auto_ptr<strlist_t> names(N);
+        flame::auto_ptr<strlist_t> names(N);
         if(!N)
             names.reset(new strlist_t);
 
@@ -477,7 +478,7 @@ void glps_add_line(parse_context *ctxt, string_t *label, string_t *etype, strlis
 
 void glps_command(parse_context* ctxt, string_t *kw)
 {
-    std::auto_ptr<string_t> SK(kw);
+    flame::auto_ptr<string_t> SK(kw);
     if(strcmp(kw->str.c_str(), "END")!=0) {
         glps_error(ctxt->scanner, ctxt, "Undefined command '%s'", kw->str.c_str());
     }
@@ -485,8 +486,8 @@ void glps_command(parse_context* ctxt, string_t *kw)
 
 void glps_call1(parse_context *ctxt, string_t *func, expr_t *arg)
 {
-    std::auto_ptr<string_t> FN(func);
-    std::auto_ptr<expr_t> ARG(arg);
+    flame::auto_ptr<string_t> FN(func);
+    flame::auto_ptr<expr_t> ARG(arg);
 
     if(func->str!="print") {
         glps_error(ctxt->scanner, ctxt, "Undefined global function '%s'", func->str.c_str());

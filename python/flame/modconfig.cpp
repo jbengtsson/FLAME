@@ -151,7 +151,7 @@ Config* list2conf(PyObject *dict)
 {
     if(!PyList_Check(dict))
         throw std::invalid_argument("Not a list");
-    std::auto_ptr<Config> conf(new Config);
+    flame::auto_ptr<Config> conf(new Config);
     List2Config(*conf, dict);
     return conf.release();
 }
@@ -228,7 +228,7 @@ Config* PyGLPSParse2Config(PyObject *, PyObject *args, PyObject *kws)
     }
 
     PyGetBuf buf;
-    std::auto_ptr<Config> C;
+    flame::auto_ptr<Config> C;
 
     PyRef<> listref;
 

@@ -2,6 +2,7 @@
 #define UTIL_H
 
 #include <map>
+#include <memory>
 #include <ostream>
 #include <stdexcept>
 
@@ -13,6 +14,17 @@
 #else
 #  define UNLIKELY(E) (E)
 #endif
+
+namespace flame {
+#if __cplusplus>=201103L
+template<typename T>
+using auto_ptr = std::unique_ptr<T>;
+#define PTRMOVE(AUTO) std::move(AUTO)
+#else
+using std::auto_ptr;
+#define PTRMOVE(AUTO) (AUTO)
+#endif
+}
 
 struct key_error : public std::runtime_error
 {
@@ -85,7 +97,7 @@ struct numeric_table {
 
 class numeric_table_cache {
     struct Pvt;
-    std::auto_ptr<Pvt> pvt;
+    flame::auto_ptr<Pvt> pvt;
 public:
     numeric_table_cache();
     ~numeric_table_cache();
