@@ -1,12 +1,30 @@
 include(FindEPICSModule)
 
+find_epics_module(
+  NAME pvData
+  IDFILES include/pv/pvData.h
+  LIBS pvData
+)
+find_epics_module(
+  NAME pvAccess
+  IDFILES include/pv/pvAccess.h
+  DBDS PVAServerRegister.dbd
+  LIBS pvAccess pvAccessIOC
+)
+find_epics_module(
+  NAME pva2pva
+  IDFILES dbd/qsrv.dbd
+  DBDS qsrv.dbd columnarinRecord.dbd
+  LIBS qsrv
+)
+
 include_directories(
   ${EPICS_INCLUDE_DIRS}
   ${Boost_INCLUDE_DIRS}
   ${CMAKE_CURRENT_SOURCE_DIR}/../src
 )
 
-add_library(flame
+list(APPEND flame_SRCS
   flame.cpp
   flamedev.cpp
   flameelem.cpp
@@ -14,10 +32,25 @@ add_library(flame
   flamemeasure.cpp
   flameorbit.cpp
 )
+if(pvData_FOUND AND pvAccess_FOUND AND pva2pva_FOUND)
+  list(APPEND flame_SRCS bpmtable.cpp)
+  include_directories(
+    ${pva2pva_INCLUDE_DIRS}
+    ${pvData_INCLUDE_DIRS}
+  )
+endif()
+
+add_library(flame ${flame_SRCS})
 target_link_libraries(flame
   flame_core
   ${Boost_REGEX_LIBRARY}
+  ${EPICS_LIBRARIES}
 )
+if(pvData_FOUND AND pvAccess_FOUND AND pva2pva_FOUND)
+  target_link_libraries(flame
+    ${pva2pva_LIBRARIES} ${pvAccess_LIBRARIES} ${pvData_LIBRARIES}
+  )
+endif()
 
 epics_install(
   PREFIX lib/epics/
@@ -64,6 +97,11 @@ if(NEED_DEMOIOC)
     list(APPEND EXTRA_LIBS ${caputlog_LIBRARIES})
   endif()
 
+  if(pvData_FOUND AND pvAccess_FOUND AND pva2pva_FOUND)
+    message(STATUS "flamedemo will include PVA integration")
+    list(APPEND EXTRA_DBDS ${pvAccess_DBDS} ${pva2pva_DBDS})
+    list(APPEND EXTRA_LIBS ${pva2pva_LIBRARIES} ${pvAccess_LIBRARIES} ${pvData_LIBRARIES})
+  endif()
 
   epics_add_ioc(flamedemo
     DBDS flameSupport.dbd

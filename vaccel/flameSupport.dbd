@@ -18,3 +18,6 @@ device(ai,       INST_IO, devFLAMEaiState,         "FLAME State")
 # readback single state parameter from many elements, present as waveform
 device(waveform, INST_IO, devFLAMEwaveformSOrbit,  "FLAME State Orbit")
 device(waveform, INST_IO, devFLAMEwaveformIOrbit,  "FLAME Index Orbit")
+
+# special BPM history table demo
+device(columnarin, INST_IO, devFLAMEcolumnarinBPM, "FLAME BPM")
