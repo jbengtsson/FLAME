@@ -2,7 +2,7 @@ include_directories(
   ${Boost_INCLUDE_DIRS}
   ${CMAKE_CURRENT_SOURCE_DIR}/../src
   ${CMAKE_CURRENT_BINARY_DIR}
-  ${HDF5_CXX_INCLUDE_DIR}
+  ${HDF5_CXX_INCLUDE_DIRS}
 )
 
 add_executable(example_sim

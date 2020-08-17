@@ -47,7 +47,7 @@ set(inst_HEADERS
 )
 
 if(USE_HDF5)
-  include_directories(${HDF5_CXX_INCLUDE_DIR})
+  include_directories(${HDF5_CXX_INCLUDE_DIRS})
   set(inst_HEADERS ${inst_HEADERS}
     flame/h5loader.h
     flame/h5writer.h
