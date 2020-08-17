@@ -71,22 +71,22 @@ struct StateBase : public boost::noncopyable
         size_t stride[maxdims];
 
         //! is the given index valid?
-        bool inbounds(size_t* d) const {
+        bool inbounds(const size_t* d) const {
             bool ret = true;
             switch(ndim) {
-            case 3: ret &= d[2]<dim[2];
-            case 2: ret &= d[1]<dim[1];
-            case 1: ret &= d[0]<dim[0];
+            case 3: ret &= d[2]<dim[2]; // fallthrough
+            case 2: ret &= d[1]<dim[1]; // fallthrough
+            case 1: ret &= d[0]<dim[0]; // fallthrough
             }
             return ret;
         }
 
-        void *raw(size_t* d) {
+        void *raw(const size_t* d) {
             char *ret = (char*)ptr;
             switch(ndim) {
-            case 3: ret += d[2]*stride[2];
-            case 2: ret += d[1]*stride[1];
-            case 1: ret += d[0]*stride[0];
+            case 3: ret += d[2]*stride[2]; // fallthrough
+            case 2: ret += d[1]*stride[1]; // fallthrough
+            case 1: ret += d[0]*stride[0]; // fallthrough
             }
             return ret;
         }
