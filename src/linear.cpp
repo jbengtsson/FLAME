@@ -174,14 +174,14 @@ struct ElementSource : public Base
         :base_t(c), istate(c)
     {}
 
-    virtual void advance(StateBase& s)
+    virtual void advance(StateBase& s) override final
     {
         state_t& ST = static_cast<state_t&>(s);
         // Replace state with our initial values
         ST.assign(istate);
     }
 
-    virtual void show(std::ostream& strm, int level) const
+    virtual void show(std::ostream& strm, int level) const override final
     {
         ElementVoid::show(strm, level);
         strm<<"Initial: "<<istate.state<<"\n";
@@ -192,7 +192,7 @@ struct ElementSource : public Base
 
     virtual ~ElementSource() {}
 
-    virtual const char* type_name() const {return "source";}
+    virtual const char* type_name() const override final {return "source";}
 };
 
 template<typename Base>
@@ -210,7 +210,7 @@ struct ElementMark : public Base
     }
     virtual ~ElementMark() {}
 
-    virtual const char* type_name() const {return "marker";}
+    virtual const char* type_name() const override final {return "marker";}
 };
 
 template<typename Base>
@@ -231,7 +231,7 @@ struct ElementDrift : public Base
     }
     virtual ~ElementDrift() {}
 
-    virtual const char* type_name() const {return "drift";}
+    virtual const char* type_name() const override final {return "drift";}
 };
 
 template<typename Base>
@@ -259,7 +259,7 @@ struct ElementSBend : public Base
     }
     virtual ~ElementSBend() {}
 
-    virtual const char* type_name() const {return "sbend";}
+    virtual const char* type_name() const override final {return "sbend";}
 };
 
 template<typename Base>
@@ -285,7 +285,7 @@ struct ElementQuad : public Base
     }
     virtual ~ElementQuad() {}
 
-    virtual const char* type_name() const {return "quadrupole";}
+    virtual const char* type_name() const override final {return "quadrupole";}
 };
 
 template<typename Base>
@@ -343,7 +343,7 @@ struct ElementSolenoid : public Base
     }
     virtual ~ElementSolenoid() {}
 
-    virtual const char* type_name() const {return "solenoid";}
+    virtual const char* type_name() const override final {return "solenoid";}
 };
 
 template<typename Base>
@@ -361,7 +361,7 @@ struct ElementGeneric : public Base
     }
     virtual ~ElementGeneric() {}
 
-    virtual const char* type_name() const {return "generic";}
+    virtual const char* type_name() const override final {return "generic";}
 };
 
 } // namespace

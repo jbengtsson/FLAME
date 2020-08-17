@@ -279,7 +279,7 @@ namespace {
 struct Logcerr : public Machine::Logger
 {
     virtual ~Logcerr() {}
-    virtual void log(const Machine::LogRecord &r)
+    virtual void log(const Machine::LogRecord &r) override final
     {
         std::string msg(r.strm.str());
         std::cerr<<r.fname<<':'<<r.lnum<<" : "<<msg;

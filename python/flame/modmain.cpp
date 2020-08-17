@@ -17,7 +17,7 @@ namespace {
 struct PyLogger : public Machine::Logger
 {
     PyRef<> logger;
-    virtual void log(const Machine::LogRecord &r)
+    virtual void log(const Machine::LogRecord &r) override final
     {
         if(logger.py()) {
             std::string msg(r.strm.str());

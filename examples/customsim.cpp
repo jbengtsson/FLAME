@@ -16,7 +16,7 @@ struct State1D : public StateBase
            xv; // transverse veclocity
 //! [StateDef]
 
-    virtual void assign(const StateBase& other)
+    virtual void assign(const StateBase& other) override final
     {
         StateBase::assign(other);
         const State1D& ST = static_cast<const State1D&>(other);
@@ -30,7 +30,7 @@ struct State1D : public StateBase
     }
 
     // allow introspection of state variable by eg. Python
-    virtual bool getArray(unsigned idx, ArrayInfo& Info)
+    virtual bool getArray(unsigned idx, ArrayInfo& Info) override final
     {
         unsigned I=0;
         if(idx==I++) {
@@ -46,7 +46,7 @@ struct State1D : public StateBase
         return true;
     }
 
-    virtual StateBase* clone() const {
+    virtual StateBase* clone() const override final {
         return new State1D(*this, clone_tag());
     }
 
@@ -81,21 +81,21 @@ struct Element1DSource : public ElementVoid
 //! [ElemSrcInit]
 
 //! [ElemSrcAdvance]
-    virtual void advance(StateBase& s)
+    virtual void advance(StateBase& s) override final
     {
         s.assign(initial);
         s.pos += length; // source element ususaly has zero length, but not required
     }
 //! [ElemSrcAdvance]
 
-    virtual void assign(const ElementVoid* other )
+    virtual void assign(const ElementVoid* other ) override final
     {
         ElementVoid::assign(other);
         const Element1DSource *O = static_cast<const Element1DSource*>(other);
         initial.assign(O->initial);
     }
 
-    virtual const char* type_name() const { return "source"; }
+    virtual const char* type_name() const override final { return "source"; }
 };
 
 //! [ElemGenericDef]
@@ -116,7 +116,7 @@ struct Element1DGeneric : public ElementVoid
 //! [ElemGenericInit]
 
 //! [ElemGenericAdvance]
-    virtual void advance(StateBase& s)
+    virtual void advance(StateBase& s) override final
     {
         State1D &ST = static_cast<State1D&>(s); // safe since sim_type=Simple1D will only use State1D
 
@@ -126,7 +126,7 @@ struct Element1DGeneric : public ElementVoid
     }
 //! [ElemGenericAdvance]
 
-    virtual void assign(const ElementVoid* other )
+    virtual void assign(const ElementVoid* other ) override final
     {
         ElementVoid::assign(other);
         const Element1DGeneric *O = static_cast<const Element1DGeneric*>(other);

@@ -40,7 +40,7 @@ struct VIOCObserver : public Observer
 
     flame::auto_ptr<StateBase> last;
 
-    virtual void view(const ElementVoid* elem, const StateBase* state);
+    virtual void view(const ElementVoid* elem, const StateBase* state) override;
 };
 
 struct Sim : public epicsThreadRunable {
@@ -71,7 +71,7 @@ struct Sim : public epicsThreadRunable {
 
     VIOCObserver *get_measure(size_t index);
 
-    virtual void run();
+    virtual void run() override final;
 
     void queueSim();
 

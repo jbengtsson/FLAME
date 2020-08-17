@@ -119,7 +119,7 @@ struct PyStoreObserver : public Observer
         :list(PyList_New(0))
     {}
     virtual ~PyStoreObserver() {}
-    virtual void view(const ElementVoid* elem, const StateBase* state)
+    virtual void view(const ElementVoid* elem, const StateBase* state) override final
     {
         PyRef<> tuple(PyTuple_New(2));
         flame::auto_ptr<StateBase> tmpstate(state->clone());

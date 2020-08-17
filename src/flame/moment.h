@@ -105,9 +105,9 @@ struct MomentState : public StateBase
                     boost::numeric::ublas::bounded_array<double, maxsize*maxsize>
     > matrix_t;
 
-    virtual void assign(const StateBase& other);
+    virtual void assign(const StateBase& other) override final;
 
-    virtual void show(std::ostream& strm, int level) const;
+    virtual void show(std::ostream& strm, int level) const override final;
 
     Particle ref;
 
@@ -122,9 +122,9 @@ struct MomentState : public StateBase
 
     double last_caviphi0;
 
-    virtual bool getArray(unsigned idx, ArrayInfo& Info);
+    virtual bool getArray(unsigned idx, ArrayInfo& Info) override final;
 
-    virtual MomentState* clone() const {
+    virtual MomentState* clone() const override final {
         return new MomentState(*this, clone_tag());
     }
 
@@ -156,7 +156,7 @@ struct MomentElementBase : public ElementVoid
 
     unsigned get_flag(const Config& c, const std::string& name, const unsigned& def_value);
 
-    virtual void advance(StateBase& s);
+    virtual void advance(StateBase& s) override;
 
     //! Return true if previously calculated 'transfer' matricies may be reused
     //! Should compare new input state against values used when 'transfer' was
@@ -173,7 +173,7 @@ struct MomentElementBase : public ElementVoid
     //! recalculate 'transfer' taking into consideration the provided input state
     virtual void recompute_matrix(state_t& ST);
 
-    virtual void show(std::ostream& strm, int level) const;
+    virtual void show(std::ostream& strm, int level) const override;
 
     Particle last_ref_in, last_ref_out;
     std::vector<Particle> last_real_in, last_real_out;

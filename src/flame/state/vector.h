@@ -20,7 +20,7 @@ struct VectorState : public StateBase
     VectorState(const Config& c);
     virtual ~VectorState();
 
-    virtual void assign(const StateBase& other);
+    virtual void assign(const StateBase& other) override final;
 
     typedef boost::numeric::ublas::vector<double,
                     boost::numeric::ublas::bounded_array<double, maxsize>
@@ -30,9 +30,9 @@ struct VectorState : public StateBase
 
     value_t state;
 
-    virtual bool getArray(unsigned idx, ArrayInfo& Info);
+    virtual bool getArray(unsigned idx, ArrayInfo& Info) override final;
 
-    virtual VectorState* clone() const {
+    virtual VectorState* clone() const override final {
         return new VectorState(*this, clone_tag());
     }
 

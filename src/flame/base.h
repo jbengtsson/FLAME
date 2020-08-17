@@ -404,14 +404,14 @@ private:
     struct element_builder_t {
         virtual ~element_builder_t() {}
         virtual ElementVoid* build(const Config& c) =0;
-        virtual void rebuild(ElementVoid *o, const Config& c, const size_t idx) =0;
+        virtual void rebuild(ElementVoid *o, const Config& c, size_t idx) =0;
     };
     template<typename Element>
     struct element_builder_impl : public element_builder_t {
         virtual ~element_builder_impl() {}
         ElementVoid* build(const Config& c)
         { return new Element(c); }
-        void rebuild(ElementVoid *o, const Config& c, const size_t idx)
+        void rebuild(ElementVoid *o, const Config& c, size_t idx) override final
         {
             flame::auto_ptr<ElementVoid> N(build(c));
             Element *m = dynamic_cast<Element*>(o);

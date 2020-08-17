@@ -136,7 +136,7 @@ struct ElementRFCavity : public MomentElementBase
 
     virtual ~ElementRFCavity() {}
 
-    virtual void assign(const ElementVoid *other) {
+    virtual void assign(const ElementVoid *other) override final {
         base_t::assign(other);
         const self_t* O=static_cast<const self_t*>(other);
         // *all* member variables must be assigned here or reconfigure() will result in inconsistancy
@@ -154,7 +154,7 @@ struct ElementRFCavity : public MomentElementBase
         forcettfcalc  = O->forcettfcalc;
     }
 
-    virtual void advance(StateBase& s)
+    virtual void advance(StateBase& s) override final
     {
         state_t&  ST = static_cast<state_t&>(s);
         using namespace boost::numeric::ublas;
@@ -289,7 +289,7 @@ struct ElementRFCavity : public MomentElementBase
         ST.calc_rms();
     }
 
-    virtual void recompute_matrix(state_t& ST)
+    virtual void recompute_matrix(state_t& ST) override final
     {
         // Re-initialize transport matrix. and update ST.ref and ST.real[]
 
@@ -313,6 +313,6 @@ struct ElementRFCavity : public MomentElementBase
         }
    }
 
-    virtual const char* type_name() const {return "rfcavity";}
+    virtual const char* type_name() const override final {return "rfcavity";}
 };
 

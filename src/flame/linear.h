@@ -26,13 +26,13 @@ struct LinearElementBase : public ElementVoid
     {}
     virtual ~LinearElementBase() {}
 
-    virtual void advance(StateBase& s)
+    virtual void advance(StateBase& s) override
     {
         State& ST = static_cast<State&>(s);
         advanceT(ST);
     }
 
-    virtual void show(std::ostream& strm, int level) const
+    virtual void show(std::ostream& strm, int level) const override
     {
         ElementVoid::show(strm, level);
         strm<<"Transfer: "<<transfer<<"\n";
@@ -42,7 +42,7 @@ struct LinearElementBase : public ElementVoid
 
     value_t transfer; //!< The transfer matrix
 
-    virtual void assign(const ElementVoid *other)
+    virtual void assign(const ElementVoid *other) override
     {
         const LinearElementBase *O = static_cast<const LinearElementBase*>(other);
         transfer = O->transfer;

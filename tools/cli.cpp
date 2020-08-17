@@ -160,7 +160,7 @@ struct UnitTestObserver : public Observer
         }
     }
 
-    virtual void view(const ElementVoid *elem, const StateBase *state)
+    virtual void view(const ElementVoid *elem, const StateBase *state) override final
     {
         // hack since getArray() is non-const
         // we won't actually modify the state
@@ -241,7 +241,7 @@ struct UnitTestObserver : public Observer
             }
         }
         virtual ~Factory() {}
-        virtual Observer *observe(Machine& M, ElementVoid* E)
+        virtual Observer *observe(Machine& M, ElementVoid* E) override final
         {
             return new UnitTestObserver(interested);
         }
@@ -254,7 +254,7 @@ struct StreamObserver : public Observer
     int detail;
     StreamObserver(std::ostream& strm, int detail=1) :strm(&strm), detail(detail) {}
     virtual ~StreamObserver() {}
-    virtual void view(const ElementVoid* elem, const StateBase* state)
+    virtual void view(const ElementVoid* elem, const StateBase* state) override final
     {
         (*strm)<<"After Element ["<<elem->index<<"] "<<elem->name<<" ";
         state->show(*strm, detail);
@@ -286,12 +286,12 @@ struct StreamObserver : public Observer
             }
         }
         virtual ~Factory() {}
-        virtual Observer *observe(Machine& M, ElementVoid* E)
+        virtual Observer *observe(Machine& M, ElementVoid* E) override final
         {
             return new StreamObserver(*strm, detail);
         }
 
-        virtual void after_sim(Machine&)
+        virtual void after_sim(Machine&) override final
         {
             strm->flush();
         }
@@ -326,23 +326,23 @@ struct H5Observer : public Observer
                 std::cerr<<"Warning: hdf5 output format requires file=...\n";
             }
         }
-        virtual Observer *observe(Machine &M, ElementVoid *E)
+        virtual Observer *observe(Machine &M, ElementVoid *E) override final
         {
             if(!writer.get()) return NULL;
             else              return new H5Observer(writer.get());
         }
-        virtual void before_sim(Machine & M)
+        virtual void before_sim(Machine & M) override final
         {
             if(writer.get()) writer->setAttr("sim_type", M.simtype());
         }
-        virtual void after_sim(Machine&)
+        virtual void after_sim(Machine&) override final
         {
             if(writer.get()) writer->close();
             writer.reset();
         }
     };
 
-    virtual void view(const ElementVoid *, const StateBase *state)
+    virtual void view(const ElementVoid *, const StateBase *state) override final
     {
         writer->append(state);
     }

@@ -27,13 +27,13 @@ struct MatrixState : public StateBase
                     boost::numeric::ublas::bounded_array<double, maxsize*maxsize>
     > value_t;
 
-    virtual void show(std::ostream& strm, int level) const;
+    virtual void show(std::ostream& strm, int level) const override final;
 
     value_t state;
 
-    virtual bool getArray(unsigned idx, ArrayInfo& Info);
+    virtual bool getArray(unsigned idx, ArrayInfo& Info) override final;
 
-    virtual MatrixState* clone() const {
+    virtual MatrixState* clone() const override final {
         return new MatrixState(*this, clone_tag());
     }
 

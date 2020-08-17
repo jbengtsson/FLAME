@@ -26,6 +26,11 @@ using std::auto_ptr;
 #endif
 }
 
+#if __cplusplus<201103L
+#define override
+#define final
+#endif
+
 struct key_error : public std::runtime_error
 {
     key_error(const std::string& s) : std::runtime_error(s) {}

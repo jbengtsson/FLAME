@@ -81,11 +81,11 @@ struct ElementStripper : public MomentElementBase
     }
     virtual ~ElementStripper() {}
 
-    virtual void assign(const ElementVoid *other) { base_t::assign(other); }
+    virtual void assign(const ElementVoid *other) override final { base_t::assign(other); }
 
-    virtual void advance(StateBase &s);
+    virtual void advance(StateBase &s) override final;
 
-    virtual const char* type_name() const {return "stripper";}
+    virtual const char* type_name() const override final {return "stripper";}
 
     void StripperCharge(const double beta, double &Q_ave, double &d);
     void ChargeStripper(const double beta, const std::vector<double>& ChgState, std::vector<double>& chargeAmount_Baron);
