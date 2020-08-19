@@ -101,9 +101,9 @@ void VectorState::assign(const StateBase& other)
     StateBase::assign(other);
 }
 
-void VectorState::show(std::ostream& strm) const
+void VectorState::show(std::ostream& strm, int level) const
 {
-    strm<<"State: "<<state<<"\n";
+    strm<<"pos="<<pos<<" State: "<<state<<"\n";
 }
 
 bool VectorState::getArray(unsigned idx, ArrayInfo& Info) {

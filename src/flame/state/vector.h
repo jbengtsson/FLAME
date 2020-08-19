@@ -26,7 +26,7 @@ struct VectorState : public StateBase
                     boost::numeric::ublas::bounded_array<double, maxsize>
     > value_t;
 
-    virtual void show(std::ostream& strm) const;
+    virtual void show(std::ostream& strm, int level) const override final;
 
     value_t state;
 
