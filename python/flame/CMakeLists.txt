@@ -125,7 +125,8 @@ add_custom_target(pyfiles ALL
 if(HAVE_NOSE)
   add_test(
     NAME nosetest
-    COMMAND ${PYTHON_EXECUTABLE} -m nose.core --exe flame
-    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/..
+    COMMAND ${PYTHON_EXECUTABLE} -m nose --exe flame
+    # WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/../python/tests/
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/test/
   )
 endif()

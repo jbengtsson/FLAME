@@ -20,4 +20,4 @@ device(waveform, INST_IO, devFLAMEwaveformSOrbit,  "FLAME State Orbit")
 device(waveform, INST_IO, devFLAMEwaveformIOrbit,  "FLAME Index Orbit")
 
 # special BPM history table demo
-device(columnarin, INST_IO, devFLAMEcolumnarinBPM, "FLAME BPM")
+# device(columnarin, INST_IO, devFLAMEcolumnarinBPM, "FLAME BPM")

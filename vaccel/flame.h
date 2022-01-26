@@ -38,7 +38,7 @@ struct VIOCObserver : public Observer
     VIOCObserver() {}
     virtual ~VIOCObserver() {}
 
-    flame::auto_ptr<StateBase> last;
+    std::unique_ptr<StateBase> last;
 
     virtual void view(const ElementVoid* elem, const StateBase* state) override;
 };
@@ -63,7 +63,7 @@ struct Sim : public epicsThreadRunable {
     double last_duration;
     std::string last_msg;
 
-    flame::auto_ptr<Machine> machine;
+    std::unique_ptr<Machine> machine;
 
     // map element index to measurement
     typedef std::map<size_t, VIOCObserver*> measures_t;

@@ -6,6 +6,7 @@
 #include "pyflame.h"
 
 #define PY_ARRAY_UNIQUE_SYMBOL FLAME_PyArray_API
+#define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
 #include <numpy/ndarrayobject.h>
 
 namespace {
@@ -103,7 +104,7 @@ init_internal(void)
             if(Py_AtExit(&PyLogger::unreg)){
                 std::cerr<<"Failed to add atexit PyLogger::unreg\n";
             } else {
-                boost::shared_ptr<Machine::Logger> log(&PyLogger::singleton, &PyLogger::noopdtor);
+                std::shared_ptr<Machine::Logger> log(&PyLogger::singleton, &PyLogger::noopdtor);
                 Machine::set_logger(log);
             }
         } catch(std::runtime_error& e){

@@ -3,12 +3,13 @@
 #include <stdlib.h>
 
 #include <algorithm>
+#include <cassert>
 #include <memory>
+#include <iterator>
 #include <stdexcept>
 #include <sstream>
 
 #include "glps_parser.h"
-#include <flame/util.h>
 
 # define M_PI 3.14159265358979323846
 
@@ -82,7 +83,7 @@ void glps_expr_debug(FILE *fp, const expr_t *E)
     fprintf(fp, "%p type %s", E, glps_expr_type_name(E->etype));
     if(E->etype==glps_expr_line) {
         try{
-            const strlist_t::list_t& L(boost::get<strlist_t::list_t>(E->value));
+            const strlist_t::list_t& L(std::get<strlist_t::list_t>(E->value));
             fprintf(fp, " [%u] (", (unsigned)L.size());
             for(size_t i=0, N=L.size(); i<N; i++)
                 fprintf(fp, "%s, ", L[i].c_str());
@@ -129,8 +130,8 @@ void glps_strlist_cleanup(strlist_t* pval)
 
 kvlist_t* glps_append_kv(parse_context *ctxt, kvlist_t* L, kv_t* V)
 {
-    flame::auto_ptr<string_t> SN(V->key);
-    flame::auto_ptr<expr_t> EV(V->value);
+    std::unique_ptr<string_t> SN(V->key);
+    std::unique_ptr<expr_t> EV(V->value);
     if(!L) {
         try{
             L = new kvlist_t;
@@ -146,8 +147,8 @@ kvlist_t* glps_append_kv(parse_context *ctxt, kvlist_t* L, kv_t* V)
 strlist_t* glps_append_expr(parse_context *ctxt, strlist_t* list, expr_t *expr)
 {
     assert(expr);
-    flame::auto_ptr<expr_t> E(expr);
-    flame::auto_ptr<strlist_t> L(list);
+    std::unique_ptr<expr_t> E(expr);
+    std::unique_ptr<strlist_t> L(list);
 
     try{
         if(!L.get()) {
@@ -157,12 +158,12 @@ strlist_t* glps_append_expr(parse_context *ctxt, strlist_t* list, expr_t *expr)
         switch(expr->etype) {
         case glps_expr_elem:
             // prepend a single element (append, the result will be reversed in glps_add_line)
-            L->list.push_back(boost::get<std::string>(expr->value));
+            L->list.push_back(std::get<std::string>(expr->value));
             break;
         case glps_expr_line:
         {
             // prepend another line (append in reversed order)
-            std::vector<std::string>& N(boost::get<std::vector<std::string> >(expr->value));
+            std::vector<std::string>& N(std::get<std::vector<std::string> >(expr->value));
 
             size_t orig = L->list.size();
             L->list.resize(L->list.size()+N.size());
@@ -177,8 +178,10 @@ strlist_t* glps_append_expr(parse_context *ctxt, strlist_t* list, expr_t *expr)
             L.reset(NULL);
         }
 
-    } catch(boost::bad_get& e) {
-        glps_error(ctxt->scanner, ctxt, "Error appending to vector: incorrect type %s", expr->value.type().name());
+    } catch(std::bad_variant_access& e) {
+        // auto name expr->value.type().name();
+	std::string name =   variant_name(expr->value.index()); /// Todo: fix this hack
+        glps_error(ctxt->scanner, ctxt, "Error appending to vector: incorrect type %s", name.c_str());
         L.reset(NULL);
     } catch(std::exception& e) {
         glps_error(ctxt->scanner, ctxt, "Error appending to vector: %s", e.what());
@@ -192,13 +195,13 @@ vector_t* glps_append_vector(parse_context *ctxt, vector_t *list, expr_t *expr)
 {
     assert(expr);
     try{
-        flame::auto_ptr<expr_t> E(expr);
-        flame::auto_ptr<vector_t> V(list);
+        std::unique_ptr<expr_t> E(expr);
+        std::unique_ptr<vector_t> V(list);
         if(!V.get())
             V.reset(new vector_t);
 
         if(expr->etype==glps_expr_number) {
-            V->value.push_back(boost::get<double>(expr->value));
+            V->value.push_back(std::get<double>(expr->value));
         } else {
             std::ostringstream strm;
             strm << "Vector element types must be scalar not type " << glps_expr_type_name(expr->etype);
@@ -214,7 +217,7 @@ vector_t* glps_append_vector(parse_context *ctxt, vector_t *list, expr_t *expr)
 
 expr_t *glps_add_value(parse_context *ctxt, glps_expr_type t, ...)
 {
-    flame::auto_ptr<expr_t> ret;
+    std::unique_ptr<expr_t> ret;
     try {
         ret.reset(new expr_t);
         ret->etype = t;
@@ -229,7 +232,7 @@ expr_t *glps_add_value(parse_context *ctxt, glps_expr_type t, ...)
         case glps_expr_var:
         {
             string_t *name = va_arg(args, string_t*);
-            flame::auto_ptr<string_t> SN(name);
+            std::unique_ptr<string_t> SN(name);
 
             parse_context::map_idx_t::const_iterator it;
 
@@ -271,7 +274,7 @@ expr_t *glps_add_value(parse_context *ctxt, glps_expr_type t, ...)
         case glps_expr_string:
         {
             string_t *name = va_arg(args, string_t*);
-            flame::auto_ptr<string_t> SN(name);
+            std::unique_ptr<string_t> SN(name);
             assert(name);
             ret->value = name->str;
         }
@@ -320,8 +323,8 @@ std::string glps_describe_op(const operation_t* op)
 
 expr_t *glps_add_op(parse_context *ctxt, string_t *name, unsigned N, expr_t **args)
 {
-    flame::auto_ptr<string_t> SN(name);
-    flame::auto_ptr<expr_t> ret;
+    std::unique_ptr<string_t> SN(name);
+    std::unique_ptr<expr_t> ret;
     try{
 
         parse_context::operations_iterator_pair opit = ctxt->operations.equal_range(name->str);
@@ -389,8 +392,8 @@ void glps_assign(parse_context *ctxt, string_t *name, expr_t*value)
     assert(name);
     assert(value);
     try{
-        flame::auto_ptr<string_t> SN(name);
-        flame::auto_ptr<expr_t> VN(value);
+        std::unique_ptr<string_t> SN(name);
+        std::unique_ptr<expr_t> VN(value);
 
         bool ok = false;
         parse_var V;
@@ -428,8 +431,8 @@ void glps_assign(parse_context *ctxt, string_t *name, expr_t*value)
 
 void glps_add_element(parse_context *ctxt, string_t *label, string_t *etype, kvlist_t *P)
 {
-    flame::auto_ptr<string_t> SL(label), SE(etype);
-    flame::auto_ptr<kvlist_t> props(P);
+    std::unique_ptr<string_t> SL(label), SE(etype);
+    std::unique_ptr<kvlist_t> props(P);
     try{
         if(!P)
             props.reset(new kvlist_t);
@@ -451,9 +454,9 @@ void glps_add_element(parse_context *ctxt, string_t *label, string_t *etype, kvl
 
 void glps_add_line(parse_context *ctxt, string_t *label, string_t *etype, strlist_t *N)
 {
-    flame::auto_ptr<string_t> SL(label), SE(etype);
+    std::unique_ptr<string_t> SL(label), SE(etype);
     try{
-        flame::auto_ptr<strlist_t> names(N);
+        std::unique_ptr<strlist_t> names(N);
         if(!N)
             names.reset(new strlist_t);
 
@@ -478,7 +481,7 @@ void glps_add_line(parse_context *ctxt, string_t *label, string_t *etype, strlis
 
 void glps_command(parse_context* ctxt, string_t *kw)
 {
-    flame::auto_ptr<string_t> SK(kw);
+    std::unique_ptr<string_t> SK(kw);
     if(strcmp(kw->str.c_str(), "END")!=0) {
         glps_error(ctxt->scanner, ctxt, "Undefined command '%s'", kw->str.c_str());
     }
@@ -486,8 +489,8 @@ void glps_command(parse_context* ctxt, string_t *kw)
 
 void glps_call1(parse_context *ctxt, string_t *func, expr_t *arg)
 {
-    flame::auto_ptr<string_t> FN(func);
-    flame::auto_ptr<expr_t> ARG(arg);
+    std::unique_ptr<string_t> FN(func);
+    std::unique_ptr<expr_t> ARG(arg);
 
     if(func->str!="print") {
         glps_error(ctxt->scanner, ctxt, "Undefined global function '%s'", func->str.c_str());
@@ -496,11 +499,11 @@ void glps_call1(parse_context *ctxt, string_t *func, expr_t *arg)
         strm<<"On line "<<glps_get_lineno(ctxt->scanner)<<" : ";
         switch(arg->etype)
         {
-        case glps_expr_number: strm<< boost::get<double>(arg->value); break;
-        case glps_expr_string: strm<<"\""<< boost::get<std::string>(arg->value)<<"\""; break;
+        case glps_expr_number: strm<< std::get<double>(arg->value); break;
+        case glps_expr_string: strm<<"\""<< std::get<std::string>(arg->value)<<"\""; break;
         case glps_expr_vector: {
             std::ostream_iterator<double> it(strm, ", ");
-            const std::vector<double>& vect = boost::get<std::vector<double> >(arg->value);
+            const std::vector<double>& vect = std::get<std::vector<double> >(arg->value);
             strm<<"[";
             std::copy(vect.begin(), vect.end(), it);
             strm<<"]";
@@ -508,7 +511,7 @@ void glps_call1(parse_context *ctxt, string_t *func, expr_t *arg)
             break;
         case glps_expr_line: {
             std::ostream_iterator<std::string> it(strm, ", ");
-            const std::vector<std::string>& vect = boost::get<std::vector<std::string> >(arg->value);
+            const std::vector<std::string>& vect = std::get<std::vector<std::string> >(arg->value);
             strm<<"(";
             std::copy(vect.begin(), vect.end(), it);
             strm<<")";

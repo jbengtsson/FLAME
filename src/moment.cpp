@@ -776,7 +776,7 @@ struct ElementSource : public MomentElementBase
 
     ElementSource(const Config& c): base_t(c), istate(c) {}
 
-    virtual void advance(StateBase& s) override final
+    virtual void advance(StateBase& s)
     {
         state_t& ST = static_cast<state_t&>(s);
         if (!ST.retreat)
@@ -784,7 +784,7 @@ struct ElementSource : public MomentElementBase
             ST.assign(istate);
     }
 
-    virtual void show(std::ostream& strm, int level) const override final
+    virtual void show(std::ostream& strm, int level) const
     {
         ElementVoid::show(strm, level);
         strm<<"Initial: "<<istate.moment0_env<<"\n";
@@ -795,9 +795,9 @@ struct ElementSource : public MomentElementBase
 
     virtual ~ElementSource() {}
 
-    virtual const char* type_name() const override final {return "source";}
+    virtual const char* type_name() const {return "source";}
 
-    virtual void assign(const ElementVoid *other) override final {
+    virtual void assign(const ElementVoid *other) {
         base_t::assign(other);
         const self_t* O=static_cast<const self_t*>(other);
         istate.assign(O->istate);
@@ -813,9 +813,9 @@ struct ElementMark : public MomentElementBase
 
     ElementMark(const Config& c): base_t(c) {length = 0e0;}
     virtual ~ElementMark() {}
-    virtual const char* type_name() const override final {return "marker";}
+    virtual const char* type_name() const {return "marker";}
 
-    virtual void assign(const ElementVoid *other) override final { base_t::assign(other); }
+    virtual void assign(const ElementVoid *other) { base_t::assign(other); }
 };
 
 struct ElementBPM : public MomentElementBase
@@ -827,9 +827,9 @@ struct ElementBPM : public MomentElementBase
 
     ElementBPM(const Config& c): base_t(c) {length = 0e0;}
     virtual ~ElementBPM() {}
-    virtual const char* type_name() const override final {return "bpm";}
+    virtual const char* type_name() const {return "bpm";}
 
-    virtual void assign(const ElementVoid *other) override final { base_t::assign(other); }
+    virtual void assign(const ElementVoid *other) { base_t::assign(other); }
 };
 
 struct ElementDrift : public MomentElementBase
@@ -841,11 +841,11 @@ struct ElementDrift : public MomentElementBase
 
     ElementDrift(const Config& c) : base_t(c) {}
     virtual ~ElementDrift() {}
-    virtual const char* type_name() const override final {return "drift";}
+    virtual const char* type_name() const {return "drift";}
 
-    virtual void assign(const ElementVoid *other) override final { base_t::assign(other); }
+    virtual void assign(const ElementVoid *other) { base_t::assign(other); }
 
-    virtual void recompute_matrix(state_t& ST) override final
+    virtual void recompute_matrix(state_t& ST)
     {
         // Re-initialize transport matrix.
 
@@ -870,11 +870,11 @@ struct ElementOrbTrim : public MomentElementBase
 
     ElementOrbTrim(const Config& c) : base_t(c) {length = 0e0;}
     virtual ~ElementOrbTrim() {}
-    virtual const char* type_name() const override final {return "orbtrim";}
+    virtual const char* type_name() const {return "orbtrim";}
 
-    virtual void assign(const ElementVoid *other) override final { base_t::assign(other); }
+    virtual void assign(const ElementVoid *other) { base_t::assign(other); }
 
-    virtual void recompute_matrix(state_t& ST) override final
+    virtual void recompute_matrix(state_t& ST)
     {
         // Re-initialize transport matrix.
         double theta_x = conf().get<double>("theta_x", 0e0),
@@ -929,15 +929,15 @@ struct ElementSBend : public MomentElementBase
             throw std::runtime_error(SB()<< "Undefined HdipoleFitMode: " << HdipoleFitMode);
     }
     virtual ~ElementSBend() {}
-    virtual const char* type_name() const override final {return "sbend";}
+    virtual const char* type_name() const {return "sbend";}
 
-    virtual void assign(const ElementVoid *other) override final {
+    virtual void assign(const ElementVoid *other) {
         base_t::assign(other);
         const self_t* O=static_cast<const self_t*>(other);
         HdipoleFitMode = O->HdipoleFitMode;
     }
 
-    virtual void advance(StateBase& s) override final
+    virtual void advance(StateBase& s)
     {
         state_t&  ST = static_cast<state_t&>(s);
         using namespace boost::numeric::ublas;
@@ -1007,7 +1007,7 @@ struct ElementSBend : public MomentElementBase
         ST.calc_rms();
     }
 
-    virtual void recompute_matrix(state_t& ST) override final
+    virtual void recompute_matrix(state_t& ST)
     {
         // Re-initialize transport matrix.
 
@@ -1056,11 +1056,11 @@ struct ElementQuad : public MomentElementBase
 
     ElementQuad(const Config& c) : base_t(c) {}
     virtual ~ElementQuad() {}
-    virtual const char* type_name() const override final {return "quadrupole";}
+    virtual const char* type_name() const {return "quadrupole";}
 
-    virtual void assign(const ElementVoid *other) override final { base_t::assign(other); }
+    virtual void assign(const ElementVoid *other) { base_t::assign(other); }
 
-    virtual void recompute_matrix(state_t& ST) override final
+    virtual void recompute_matrix(state_t& ST)
     {
         const double L = conf().get<double>("L")*MtoMM;
         const unsigned ncurve = get_flag(conf(), "ncurve", 0);
@@ -1128,11 +1128,11 @@ struct ElementSext : public MomentElementBase
     ElementSext(const Config& c) : base_t(c) {}
 
     virtual ~ElementSext() {}
-    virtual const char* type_name() const override final {return "sextupole";}
+    virtual const char* type_name() const {return "sextupole";}
 
-    virtual void assign(const ElementVoid *other) override final {base_t::assign(other); }
+    virtual void assign(const ElementVoid *other) {base_t::assign(other); }
 
-    virtual void advance(StateBase& s) override final
+    virtual void advance(StateBase& s)
     {
         const double B3= conf().get<double>("B3"),
                      L = conf().get<double>("L")*MtoMM;
@@ -1220,11 +1220,11 @@ struct ElementSolenoid : public MomentElementBase
 
     ElementSolenoid(const Config& c) : base_t(c) {}
     virtual ~ElementSolenoid() {}
-    virtual const char* type_name() const override final {return "solenoid";}
+    virtual const char* type_name() const {return "solenoid";}
 
-    virtual void assign(const ElementVoid *other) override final { base_t::assign(other); }
+    virtual void assign(const ElementVoid *other) { base_t::assign(other); }
 
-    virtual void recompute_matrix(state_t& ST) override final
+    virtual void recompute_matrix(state_t& ST)
     {
         const double L = conf().get<double>("L")*MtoMM;      // Convert from [m] to [mm].
         const unsigned ncurve = get_flag(conf(), "ncurve", 0);
@@ -1287,11 +1287,11 @@ struct ElementEDipole : public MomentElementBase
 
     ElementEDipole(const Config& c) : base_t(c) {}
     virtual ~ElementEDipole() {}
-    virtual const char* type_name() const override final {return "edipole";}
+    virtual const char* type_name() const {return "edipole";}
 
-    virtual void assign(const ElementVoid *other) override final { base_t::assign(other); }
+    virtual void assign(const ElementVoid *other) { base_t::assign(other); }
 
-    virtual void recompute_matrix(state_t& ST) override final
+    virtual void recompute_matrix(state_t& ST)
     {
         // Re-initialize transport matrix.
 
@@ -1371,11 +1371,11 @@ struct ElementEQuad : public MomentElementBase
 
     ElementEQuad(const Config& c) : base_t(c) {}
     virtual ~ElementEQuad() {}
-    virtual const char* type_name() const override final {return "equad";}
+    virtual const char* type_name() const {return "equad";}
 
-    virtual void assign(const ElementVoid *other) override final { base_t::assign(other); }
+    virtual void assign(const ElementVoid *other) { base_t::assign(other); }
 
-    virtual void recompute_matrix(state_t& ST) override final
+    virtual void recompute_matrix(state_t& ST)
     {
         const double   L      = conf().get<double>("L")*MtoMM;
         const unsigned ncurve = get_flag(conf(), "ncurve", 0);
@@ -1447,11 +1447,11 @@ struct ElementTMatrix : public MomentElementBase
 
     ElementTMatrix(const Config& c) : base_t(c) {}
     virtual ~ElementTMatrix() {}
-    virtual const char* type_name() const override final {return "tmatrix";}
+    virtual const char* type_name() const {return "tmatrix";}
 
-    virtual void assign(const ElementVoid *other) override final { base_t::assign(other); }
+    virtual void assign(const ElementVoid *other) { base_t::assign(other); }
 
-    virtual void recompute_matrix(state_t& ST) override final
+    virtual void recompute_matrix(state_t& ST)
     {
         for(size_t i=0; i<last_real_in.size(); i++) {
             load_storage(transfer[i].data(), conf(), "matrix");

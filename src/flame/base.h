@@ -7,13 +7,13 @@
 #include <ostream>
 #include <string>
 #include <map>
+#include <memory>
 #include <vector>
 #include <utility>
 
-#include <boost/noncopyable.hpp>
-#include <boost/any.hpp>
-#include <boost/shared_ptr.hpp>
-#include <boost/call_traits.hpp>
+// #include <boost/noncopyable.hpp>
+// #include <boost/any.hpp>
+// #include <boost/call_traits.hpp>
 
 #include "config.h"
 #include "util.h"
@@ -74,9 +74,11 @@ struct StateBase : public boost::noncopyable
         bool inbounds(const size_t* d) const {
             bool ret = true;
             switch(ndim) {
-            case 3: ret &= d[2]<dim[2]; // fallthrough
-            case 2: ret &= d[1]<dim[1]; // fallthrough
-            case 1: ret &= d[0]<dim[0]; // fallthrough
+            case 3: ret &= d[2]<dim[2];  /* fallthrough */ [[fallthrough]];
+            case 2: ret &= d[1]<dim[1];  /* fallthrough */ [[fallthrough]];
+            case 1: ret &= d[0]<dim[0];  break;
+            default:
+	        throw std::range_error("Dim not in [1, 2, 3]");
             }
             return ret;
         }
@@ -84,9 +86,11 @@ struct StateBase : public boost::noncopyable
         void *raw(const size_t* d) {
             char *ret = (char*)ptr;
             switch(ndim) {
-            case 3: ret += d[2]*stride[2]; // fallthrough
-            case 2: ret += d[1]*stride[1]; // fallthrough
-            case 1: ret += d[0]*stride[0]; // fallthrough
+            case 3: ret += d[2]*stride[2]; /* fallthrough */ [[fallthrough]];
+            case 2: ret += d[1]*stride[1]; /* fallthrough */ [[fallthrough]];
+            case 1: ret += d[0]*stride[0]; break;
+            default:
+	        throw std::range_error("Dim not in [1, 2, 3]");
             }
             return ret;
         }
@@ -177,7 +181,7 @@ struct ElementVoid : public boost::noncopyable
      * Sub-classes are allowed to require certain parameters to be provided.
      *
      * @throws KeyError       If a required parameter is missing
-     * @throws boost::bad_get If a parameter exists, but has the wrong value type
+     * @throws std::bad_variant_access If a parameter exists, but has the wrong value type
      */
     ElementVoid(const Config& conf);
     virtual ~ElementVoid();
@@ -404,16 +408,16 @@ private:
     struct element_builder_t {
         virtual ~element_builder_t() {}
         virtual ElementVoid* build(const Config& c) =0;
-        virtual void rebuild(ElementVoid *o, const Config& c, size_t idx) =0;
+        virtual void rebuild(ElementVoid *o, const Config& c, const size_t idx) =0;
     };
     template<typename Element>
     struct element_builder_impl : public element_builder_t {
         virtual ~element_builder_impl() {}
         ElementVoid* build(const Config& c)
         { return new Element(c); }
-        void rebuild(ElementVoid *o, const Config& c, size_t idx) override final
+        void rebuild(ElementVoid *o, const Config& c, const size_t idx) override final
         {
-            flame::auto_ptr<ElementVoid> N(build(c));
+            std::unique_ptr<ElementVoid> N(build(c));
             Element *m = dynamic_cast<Element*>(o);
             if(!m)
                 throw std::runtime_error("reconfigure() can't change element type");
@@ -519,9 +523,9 @@ public:
 
     static inline bool detail(int lvl) { return log_detail<=lvl; }
 
-    static void set_logger(const boost::shared_ptr<Logger>& p);
+    static void set_logger(const std::shared_ptr<Logger>& p);
 private:
-    static boost::shared_ptr<Logger> p_logger;
+    static std::shared_ptr<Logger> p_logger;
 };
 
 #define FLAME_ERROR 40

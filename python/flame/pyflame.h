@@ -113,8 +113,8 @@ struct PyRef {
     PyObject* releasePy() {
         return (PyObject*)release();
     }
-    PyObject* py() const {
-        return (PyObject*)_ptr;
+    T* py() const {
+        return (T*)_ptr;
     }
     template<typename E>
     E* as() const {

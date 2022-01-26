@@ -13,7 +13,7 @@ try {
 
     glps_debug = 1;
 
-    flame::auto_ptr<Config> conf;
+    std::unique_ptr<Config> conf;
 
     try {
         GLPSParser P;

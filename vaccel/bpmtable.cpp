@@ -40,7 +40,7 @@ long orbit_init_ci(columnarinRecord *prec)
         if(!boost::regex_match(link, M, linkpat))
             throw std::runtime_error("Bad link string");
 
-        flame::auto_ptr<SimBPMTable> priv(new SimBPMTable);
+        std::unique_ptr<SimBPMTable> priv(new SimBPMTable);
         priv->prec = (dbCommon*)prec;
 
         if(!find(SimGlobal.sims, M.str(1), priv->sim))
@@ -74,7 +74,7 @@ long orbit_init_ci(columnarinRecord *prec)
         unsigned idx;
         {
             Config empty;
-            flame::auto_ptr<StateBase> state(priv->sim->machine->allocState(empty));
+            std::unique_ptr<StateBase> state(priv->sim->machine->allocState(empty));
 
             for(idx=0; true; idx++) {
                 StateBase::ArrayInfo info;

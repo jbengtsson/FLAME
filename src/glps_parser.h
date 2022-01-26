@@ -9,10 +9,10 @@
 #include <map>
 #include <set>
 
-#include <boost/variant.hpp>
-#define BOOST_FILESYSTEM_DYN_LINK
-#include <boost/filesystem.hpp>
-#include <boost/shared_ptr.hpp>
+#include <variant>
+#include <filesystem>
+#include <memory>
+
 extern "C" {
 #endif
 
@@ -80,13 +80,29 @@ expr_t *glps_add_op(parse_context *ctxt, string_t *, unsigned N, expr_t **);
 
 class Config;
 
-typedef boost::variant<
+typedef std::variant<
     double, // glps_expr_number
     std::vector<double>, // glps_expr_vector
     std::string, // glps_expr_string,
     std::vector<std::string>, // glps_expr_line
-    boost::shared_ptr<Config> // glps_expr_config
+    std::shared_ptr<Config> // glps_expr_config
 > expr_value_t;
+
+/**
+ * Todo: should be a more c++ introspection type
+ */
+inline const std::string variant_name(int index)
+{
+    switch(index){
+    case 0: return "double";
+    case 1: return "std::vector<double>";
+    case 2: return "std::string";
+    case 3: return "std::vector<std::string>";
+    case 4: return "std::shared_ptr<Config>";
+    default:
+	throw std::range_error("Unknown index");
+    }
+}
 
 struct string_t {
     std::string str;
@@ -180,7 +196,7 @@ struct parse_context {
     //! Directory containing the file being parsed, or process CWD
     //! when parsing a string.
     //! Used to expand relative paths
-    boost::filesystem::path cwd;
+    std::filesystem::path cwd;
 
     //! Initialize context, including populating operations table
     parse_context(const char *path=NULL);

@@ -22,7 +22,7 @@ int PyMachine_init(PyObject *raw, PyObject *args, PyObject *kws)
     TRY {
         assert(!machine->weak);
 
-        flame::auto_ptr<Config> C(PyGLPSParse2Config(raw, args, kws));
+        std::unique_ptr<Config> C(PyGLPSParse2Config(raw, args, kws));
 
         machine->machine = new Machine(*C);
 
@@ -36,7 +36,7 @@ static
 void PyMachine_free(PyObject *raw)
 {
     TRY {
-        flame::auto_ptr<Machine> S(machine->machine);
+        std::unique_ptr<Machine> S(machine->machine);
         machine->machine = NULL;
 
         if(machine->weak)
@@ -105,7 +105,7 @@ PyObject *PyMachine_allocState(PyObject *raw, PyObject *args, PyObject *kws)
         } else {
             return PyErr_Format(PyExc_ValueError, "allocState() needs config=None or {}");
         }
-        flame::auto_ptr<StateBase> state(machine->machine->allocState(C));
+        std::unique_ptr<StateBase> state(machine->machine->allocState(C));
         PyObject *ret = wrapstate(state.get());
         state.release();
         return ret;
@@ -122,7 +122,7 @@ struct PyStoreObserver : public Observer
     virtual void view(const ElementVoid* elem, const StateBase* state) override final
     {
         PyRef<> tuple(PyTuple_New(2));
-        flame::auto_ptr<StateBase> tmpstate(state->clone());
+        std::unique_ptr<StateBase> tmpstate(state->clone());
         PyRef<> statecopy(wrapstate(tmpstate.get()));
         tmpstate.release();
 
@@ -262,16 +262,21 @@ Py_ssize_t PyMachine_len(PyObject *raw)
     }CATCH1(-1)
 }
 
+/*
+ * What a hack
+ */
+#define TOPYCF(func_ptr) ((PyCFunction)((void*) func_ptr))
+
 static PyMethodDef PyMachine_methods[] = {
-    {"conf", (PyCFunction)&PyMachine_conf, METH_VARARGS|METH_KEYWORDS,
+    {"conf", TOPYCF(&PyMachine_conf), METH_VARARGS|METH_KEYWORDS,
      "conf() -> {} Machine config\n"
      "conf(index) -> {} Element config"},
-    {"allocState", (PyCFunction)&PyMachine_allocState, METH_VARARGS|METH_KEYWORDS,
+    {"allocState", TOPYCF(&PyMachine_allocState), METH_VARARGS|METH_KEYWORDS,
      "allocState() -> State\n"
      "allocState({'variable':int|str}) -> State\n"
      "Allocate a new State based on this Machine's configuration."
      "  Optionally provide additional configuration"},
-    {"propagate", (PyCFunction)&PyMachine_propagate, METH_VARARGS|METH_KEYWORDS,
+    {"propagate", TOPYCF(&PyMachine_propagate), METH_VARARGS|METH_KEYWORDS,
      "propagate(State, start=0, max=INT_MAX, observe=None)\n"
      "propagate(State, start=0, max=INT_MAX, observe=[1,4,...]) -> [(index,State), ...]\n"
      "Propagate the provided State through the simulation.\n"
@@ -281,10 +286,10 @@ static PyMethodDef PyMachine_methods[] = {
      "observe may be None or an iterable yielding element indicies.\n"
      "In the second form propagate() returns a list of tuples with the output State of the selected elements."
     },
-    {"reconfigure", (PyCFunction)&PyMachine_reconfigure, METH_VARARGS|METH_KEYWORDS,
+    {"reconfigure", TOPYCF(&PyMachine_reconfigure), METH_VARARGS|METH_KEYWORDS,
      "reconfigure(index, {'variable':int|str})\n"
      "Change the configuration of an element."},
-    {"find", (PyCFunction)&PyMachine_find, METH_VARARGS|METH_KEYWORDS,
+    {"find", TOPYCF(&PyMachine_find), METH_VARARGS|METH_KEYWORDS,
     "find(name=None, type=None) -> [int]\n"
     "Return a list of element indices for element name or type matching the given string."},
     {NULL, NULL, 0, NULL}

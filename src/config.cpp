@@ -1,8 +1,12 @@
 
+#include <cstring>
 #include <iostream>
 #include <sstream>
 #include <set>
+#include <filesystem>
 
+// #include  <boost/variant/apply_visitor.hpp>
+#include  <boost/variant/static_visitor.hpp>
 #include <flame/config.h>
 #include <flame/util.h>
 
@@ -190,7 +194,7 @@ Config::show(std::ostream& strm, unsigned indent) const
     for(Config::values_t::const_iterator it=values->begin(), end=values->end();
         it!=end; ++it)
     {
-        boost::apply_visitor(show_value(strm, it->first, indent), it->second);
+        std::visit(show_value(strm, it->first, indent), it->second);
     }
 }
 
@@ -223,16 +227,16 @@ void assign_expr_to_Config(Config& conf, const std::string& name, const expr_t& 
     switch(expr.etype)
     {
     case glps_expr_number:
-        conf.set<double>(name, boost::get<double>(expr.value));
+        conf.set<double>(name, std::get<double>(expr.value));
         break;
     case glps_expr_string:
-        conf.set<std::string>(name, boost::get<std::string>(expr.value));
+        conf.set<std::string>(name, std::get<std::string>(expr.value));
         break;
     case glps_expr_vector:
-        conf.set<std::vector<double> >(name, boost::get<std::vector<double> >(expr.value));
+        conf.set<std::vector<double> >(name, std::get<std::vector<double> >(expr.value));
         break;
     case glps_expr_config: {
-        boost::shared_ptr<Config> pconf(boost::get<boost::shared_ptr<Config> >(expr.value));
+        std::shared_ptr<Config> pconf(std::get<std::shared_ptr<Config> >(expr.value));
         std::vector<Config> cvect;
         if(pconf)
             cvect.push_back(*pconf);
@@ -257,13 +261,13 @@ struct GLPSParser::Pvt {
         for(values_t::const_iterator it=vars.begin(), end=vars.end(); it!=end; ++it)
         {
             // fill in ctxt.vars and ctxt.var_idx
-            boost::apply_visitor(store_ctxt_var(ctxt, it->first), it->second);
+            std::visit(store_ctxt_var(ctxt, it->first), it->second);
         }
     }
 
     Config* fill_context(parse_context& ctxt, const bool lattice=true)
     {
-        flame::auto_ptr<Config> ret(new Config);
+        std::unique_ptr<Config> ret(new Config);
         ret->reserve(ctxt.vars.size()+2);
 
         // copy ctxt.vars to top level Config
@@ -363,11 +367,11 @@ GLPSParser::setPrinter(std::ostream* strm)
 Config*
 GLPSParser::parse_file(const char *fname, const bool have_lattice)
 {
-    boost::filesystem::path fpath;
+    std::filesystem::path fpath;
     if(fname) {
-        fpath = boost::filesystem::canonical(fname).parent_path();
+        fpath = std::filesystem::canonical(fname).parent_path();
     } else {
-        fpath = boost::filesystem::current_path();
+        fpath = std::filesystem::current_path();
     }
 
     FILE *fp;
@@ -502,7 +506,7 @@ void GLPSPrint(std::ostream& strm, const Config& conf)
     for(Config::const_iterator it=conf.begin(), end=conf.end();
         it!=end; ++it)
     {
-        boost::apply_visitor(glps_show(strm, it->first), it->second);
+        std::visit(glps_show(strm, it->first), it->second);
     }
 
     const Config::vector_t *v;
@@ -511,7 +515,7 @@ void GLPSPrint(std::ostream& strm, const Config& conf)
     }catch(key_error&){
         strm<<"# Missing beamline element list\n";
         return;
-    }catch(boost::bad_get&){
+    }catch(std::bad_variant_access&){
         strm<<"# 'elements' is not a beamline element list\n";
         return;
     }
@@ -539,7 +543,7 @@ void GLPSPrint(std::ostream& strm, const Config& conf)
             eshown.insert(name);
         }catch(key_error&){
             ok=false;
-        }catch(boost::bad_get&){
+        }catch(std::bad_variant_access&){
             ok=false;
         }
         if(!ok)
@@ -550,7 +554,7 @@ void GLPSPrint(std::ostream& strm, const Config& conf)
         {
             if(itx->first=="name" || itx->first=="type")
                 continue;
-            boost::apply_visitor(glps_show_props(strm, itx->first), itx->second);
+            std::visit(glps_show_props(strm, itx->first), itx->second);
         }
 
         strm<<";\n";

@@ -76,7 +76,7 @@ message(STATUS "cppcheck ${CPPCHECK_EXECUTABLE}")
 
 message(STATUS "Boost libs in ${Boost_LIBRARY_DIRS}")
 
-find_package(PythonInterp 2.7)
+find_package(PythonInterp 3)
 
 if(PYTHONINTERP_FOUND)
   # Introspect this interpreter

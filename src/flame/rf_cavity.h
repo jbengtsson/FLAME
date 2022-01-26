@@ -82,7 +82,7 @@ struct ElementRFCavity : public MomentElementBase
                         NrLim;      // Limits for normalization factor q*scl/m
 
     double calFitPow(double kfac, const std::vector<double>& Tfit) const;
-    static std::map<std::string,boost::shared_ptr<Config> > CavConfMap;
+    static std::map<std::string,std::shared_ptr<Config> > CavConfMap;
 
     std::vector<CavTLMLineType> CavTLMLineTab; // from lattice, for each charge state
     double fRF,    // RF frequency [Hz]
@@ -315,4 +315,3 @@ struct ElementRFCavity : public MomentElementBase
 
     virtual const char* type_name() const override final {return "rfcavity";}
 };
-

@@ -1,3 +1,4 @@
+#include <cstring>
 #include <typeinfo>
 
 #include <waveformRecord.h>
@@ -46,7 +47,7 @@ static
 void init_global(dbCommon *prec, const char *link)
 {
     try {
-        flame::auto_ptr<SimDev> priv(new SimDev);
+        std::unique_ptr<SimDev> priv(new SimDev);
         priv->prec = prec;
 
         if(!find(SimGlobal.sims, link, priv->sim))

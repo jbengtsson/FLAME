@@ -1,13 +1,13 @@
 
 #include <fstream>
+#include <filesystem>
 
 #include <ctime>
 
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/thread/mutex.hpp>
-#define BOOST_FILESYSTEM_DYN_LINK
-#include <boost/filesystem.hpp>
-
+// #define BOOST_FILESYSTEM_DYN_LINK
+// #include <boost/filesystem.hpp>
 #include "flame/util.h"
 
 void numeric_table::readvec(std::vector<double> vec, int numcol)
@@ -113,8 +113,8 @@ struct numeric_table_cache::Pvt {
     boost::mutex lock;
 
     struct Value {
-        std::time_t lastmod;
-        typedef boost::shared_ptr<numeric_table> table_pointer;
+        std::filesystem::file_time_type lastmod;
+        typedef std::shared_ptr<numeric_table> table_pointer;
         table_pointer table;
     };
 
@@ -132,11 +132,11 @@ numeric_table_cache::table_pointer numeric_table_cache::fetch(const std::string&
 {
     Pvt::Value::table_pointer ret;
 
-    boost::filesystem::path P(path);
+    std::filesystem::path P(path);
     if(!P.is_absolute())
         throw std::logic_error("numeric_table_cache want's absolute paths");
 
-    std::time_t mtime = boost::filesystem::last_write_time(P);
+    auto mtime = std::filesystem::last_write_time(P);
 
     boost::mutex::scoped_lock L(pvt->lock);
 
@@ -151,7 +151,7 @@ numeric_table_cache::table_pointer numeric_table_cache::fetch(const std::string&
         ret->read(strm);
 
         Pvt::Value v;
-        v.lastmod = boost::filesystem::last_write_time(P); // fetch again to avoid some, but not all, races
+        v.lastmod = std::filesystem::last_write_time(P); // fetch again to avoid some, but not all, races
         v.table = ret;
 
         pvt->cache[path] = v;

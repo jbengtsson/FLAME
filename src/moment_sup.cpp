@@ -15,7 +15,7 @@
     #define defpath "."
 #endif
 
-std::map<std::string,boost::shared_ptr<Config> > CurveMap;
+std::map<std::string,std::shared_ptr<Config> > CurveMap;
 
 // http://www.crystalclearsoftware.com/cgi-bin/boost_wiki/wiki.pl?LU_Matrix_Inversion
 // by LU-decomposition.
@@ -385,7 +385,7 @@ void GetEBendMatrix(const double L, const double phi, const double fringe_x, con
 void GetCurveData(const Config &c, const unsigned ncurve, std::vector<double> &Scales,
                   std::vector<std::vector<double> > &Curves)
 {
-    boost::shared_ptr<Config> conf;
+    std::shared_ptr<Config> conf;
 
     std::string filename;
     std::vector<double> range;

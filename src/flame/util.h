@@ -2,7 +2,6 @@
 #define UTIL_H
 
 #include <map>
-#include <memory>
 #include <ostream>
 #include <stdexcept>
 
@@ -13,22 +12,6 @@
 #  define UNLIKELY(E) __builtin_expect(E, 0)
 #else
 #  define UNLIKELY(E) (E)
-#endif
-
-namespace flame {
-#if __cplusplus>=201103L
-template<typename T>
-using auto_ptr = std::unique_ptr<T>;
-#define PTRMOVE(AUTO) std::move(AUTO)
-#else
-using std::auto_ptr;
-#define PTRMOVE(AUTO) (AUTO)
-#endif
-}
-
-#if __cplusplus<201103L
-#define override
-#define final
 #endif
 
 struct key_error : public std::runtime_error
@@ -102,12 +85,12 @@ struct numeric_table {
 
 class numeric_table_cache {
     struct Pvt;
-    flame::auto_ptr<Pvt> pvt;
+    std::unique_ptr<Pvt> pvt;
 public:
     numeric_table_cache();
     ~numeric_table_cache();
 
-    typedef boost::shared_ptr<const numeric_table> table_pointer;
+    typedef std::shared_ptr<const numeric_table> table_pointer;
 
     table_pointer fetch(const std::string& path);
 

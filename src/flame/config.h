@@ -16,10 +16,9 @@ extern "C" {
 #include <memory>
 #include <stdexcept>
 
-#include <boost/shared_ptr.hpp>
-#include <boost/variant.hpp>
+#include <variant>
 #include <boost/call_traits.hpp>
-#include <boost/static_assert.hpp>
+//#include <boost/static_assert.hpp>
 
 #include "util.h"
 
@@ -67,7 +66,7 @@ class Config
 {
 public:
     //! An individual value (double, double[], string, or Config[])
-    typedef boost::variant<
+    typedef std::variant<
         double,
         std::vector<double>,
         std::string,
@@ -78,8 +77,8 @@ public:
 
     typedef std::map<std::string, value_t> values_t;
 private:
-    typedef boost::shared_ptr<values_t> values_pointer;
-    typedef boost::shared_ptr<const values_t> const_values_pointer;
+    typedef std::shared_ptr<values_t> values_pointer;
+    typedef std::shared_ptr<const values_t> const_values_pointer;
 
     values_pointer values;
     const_values_pointer implicit_values;
@@ -122,8 +121,8 @@ public:
     typename detail::RT<T>::type
     get(const std::string& name) const {
         try {
-            return boost::get<typename detail::is_config_value<T>::type>(getAny(name));
-        } catch(boost::bad_get&) {
+            return std::get<typename detail::is_config_value<T>::type>(getAny(name));
+        } catch(std::bad_variant_access&) {
             throw key_error(SB()<<"Wrong type for '"<<name<<"'.  should be "<<typeid(T).name());
         }
     }
@@ -140,8 +139,8 @@ public:
     typename detail::RT<T>::type
     get(const std::string& name, typename boost::call_traits<T>::param_type def) const {
         try{
-            return boost::get<typename detail::is_config_value<T>::type>(getAny(name));
-        } catch(boost::bad_get&) {
+            return std::get<typename detail::is_config_value<T>::type>(getAny(name));
+        } catch(std::bad_variant_access&) {
         } catch(key_error&) {
         }
         return def;
@@ -157,9 +156,9 @@ public:
         value_t ret;
         if(tryGetAny(name, ret)) {
             try{
-                val = boost::get<typename detail::is_config_value<T>::type>(ret);
+                val = std::get<typename detail::is_config_value<T>::type>(ret);
                 return true;
-            } catch(boost::bad_get&) {
+            } catch(std::bad_variant_access&) {
             }
         }
         return false;
@@ -193,9 +192,9 @@ public:
               typename boost::call_traits<typename detail::is_config_value<T>::type>::reference val)
     {
         value_t temp = detail::buildval<T>::op();
-        val.swap(boost::get<T>(temp));
+        val.swap(std::get<T>(temp));
         swapAny(name, temp);
-        //val.swap(boost::get<T>(temp)); // TODO: detect insert, make this a real swap
+        //val.swap(std::get<T>(temp)); // TODO: detect insert, make this a real swap
     }
 
     //! Exchange entire Config
@@ -240,7 +239,7 @@ std::ostream& operator<<(std::ostream& strm, const Config& c)
 class GLPSParser
 {
     class Pvt;
-    flame::auto_ptr<Pvt> priv;
+    std::unique_ptr<Pvt> priv;
 public:
     //! Construct an empty parser context
     GLPSParser();

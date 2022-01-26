@@ -19,7 +19,7 @@
     #define defpath "."
 #endif
 
-std::map<std::string,boost::shared_ptr<Config> > ElementRFCavity::CavConfMap;
+std::map<std::string,std::shared_ptr<Config> > ElementRFCavity::CavConfMap;
 
 // RF Cavity beam dynamics functions.
 
@@ -804,7 +804,7 @@ void  ElementRFCavity::LoadCavityFile(const Config& c)
     }
     else
     {
-        boost::shared_ptr<Config> conf;
+        std::shared_ptr<Config> conf;
         std::string key(SB()<<DataFile<<"|"<<boost::filesystem::last_write_time(DataFile));
         if ( CavConfMap.find(key) == CavConfMap.end() ) {
             // not found in CavConfMap

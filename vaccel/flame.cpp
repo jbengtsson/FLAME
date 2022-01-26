@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <iostream>
+#include <cstring>
 
 #include <epicsExport.h>
 #include <epicsExit.h>
@@ -52,7 +53,7 @@ void Sim::run()
         epicsTimeGetCurrent(&start);
 
         try {
-            flame::auto_ptr<StateBase> state(machine->allocState());
+            std::unique_ptr<StateBase> state(machine->allocState());
 
             machine->propagate(state.get());
 
@@ -102,13 +103,13 @@ void flamePrepare(const char *name, const char *lattice)
         if(SimGlobal.sims.find(name)!=SimGlobal.sims.end())
             throw std::runtime_error("Sim name already in use");
 
-        flame::auto_ptr<Config> conf;
+        std::unique_ptr<Config> conf;
         {
             GLPSParser parser;
             conf.reset(parser.parse_file(lattice));
         }
 
-        flame::auto_ptr<Sim> sim(new Sim(name));
+        std::unique_ptr<Sim> sim(new Sim(name));
 
         sim->machine.reset(new Machine(*conf));
 

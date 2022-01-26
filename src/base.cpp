@@ -293,11 +293,11 @@ Logcerr Logcerr::singleton;
 }
 
 int Machine::log_detail = FLAME_WARN;
-boost::shared_ptr<Machine::Logger> Machine::p_logger(&Logcerr::singleton, Logcerr::noopdtor);
+std::shared_ptr<Machine::Logger> Machine::p_logger(&Logcerr::singleton, Logcerr::noopdtor);
 
-void Machine::set_logger(const boost::shared_ptr<Logger> &p)
+void Machine::set_logger(const std::shared_ptr<Logger> &p)
 {
-    boost::shared_ptr<Logger> temp(p);
+    std::shared_ptr<Logger> temp(p);
     if(!temp)
         temp.reset(&Logcerr::singleton, Logcerr::noopdtor);
     {
@@ -308,7 +308,7 @@ void Machine::set_logger(const boost::shared_ptr<Logger> &p)
 
 Machine::LogRecord::~LogRecord()
 {
-    boost::shared_ptr<Logger> logger;
+    std::shared_ptr<Logger> logger;
     {
         info_mutex_t::scoped_lock G(info_mutex);
         logger = p_logger;

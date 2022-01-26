@@ -5,7 +5,7 @@
 #include "base.h"
 #include "moment.h"
 
-static std::map<std::string,boost::shared_ptr<Config> > CurveMap;
+static std::map<std::string,std::shared_ptr<Config> > CurveMap;
 
 void inverse(MomentElementBase::value_t& out, const MomentElementBase::value_t& in);
 

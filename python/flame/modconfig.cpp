@@ -8,7 +8,9 @@
 
 #define NO_IMPORT_ARRAY
 #define PY_ARRAY_UNIQUE_SYMBOL FLAME_PyArray_API
+#define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
 #include <numpy/ndarrayobject.h>
+#include <boost/variant/static_visitor.hpp>
 
 /** Translate python list of tuples to Config
  *
@@ -35,7 +37,7 @@ void List2Config(Config& ret, PyObject *list, unsigned depth)
             throw std::runtime_error("list item is not a tuple?");
 
         if(PyArray_Check(value)) { // array as vector<double>
-            PyRef<> arr(PyArray_ContiguousFromAny(value, NPY_DOUBLE, 0, 2));
+            PyRef<PyArrayObject> arr(PyArray_ContiguousFromAny(value, NPY_DOUBLE, 0, 2));
             double *buf = (double*)PyArray_DATA(arr.py());
             std::vector<double> temp(PyArray_SIZE(arr.py()));
             std::copy(buf, buf+temp.size(), temp.begin());
@@ -111,8 +113,8 @@ struct confval : public boost::static_visitor<PyRef<> >
     {
         npy_intp dims[]  = {(npy_intp)v.size()};
         PyRef<> obj(PyArray_SimpleNew(1, dims, NPY_DOUBLE));
-        std::copy(v.begin(), v.end(), (double*)PyArray_DATA(obj.py()));
-        return obj;
+        std::copy(v.begin(), v.end(), (double*)PyArray_DATA((PyArrayObject*)obj.py()));
+        return  obj; /* (PyObject*) any pyarray is a pyobject */
     }
 
     PyRef<> operator()(const Config::vector_t& v) const
@@ -138,7 +140,7 @@ PyObject* conf2dict(const Config *conf)
     for(Config::const_iterator it=conf->begin(), end=conf->end();
         it!=end; ++it)
     {
-        PyRef<> val(boost::apply_visitor(confval(), it->second));
+        PyRef<> val(std::visit(confval(), it->second));
         PyRef<> tup(Py_BuildValue("sO", it->first.c_str(), val.py()));
         if(PyList_Append(list.py(), tup.py()))
             throw std::runtime_error("Failed to insert into dictionary from conf2dict");
@@ -151,7 +153,7 @@ Config* list2conf(PyObject *dict)
 {
     if(!PyList_Check(dict))
         throw std::invalid_argument("Not a list");
-    flame::auto_ptr<Config> conf(new Config);
+    std::unique_ptr<Config> conf(new Config);
     List2Config(*conf, dict);
     return conf.release();
 }
@@ -228,7 +230,7 @@ Config* PyGLPSParse2Config(PyObject *, PyObject *args, PyObject *kws)
     }
 
     PyGetBuf buf;
-    flame::auto_ptr<Config> C;
+    std::unique_ptr<Config> C;
 
     PyRef<> listref;
 
