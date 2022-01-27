@@ -813,9 +813,9 @@ struct ElementMark : public MomentElementBase
 
     ElementMark(const Config& c): base_t(c) {length = 0e0;}
     virtual ~ElementMark() {}
-    virtual const char* type_name() const {return "marker";}
+    virtual const char* type_name() const override final {return "marker";}
 
-    virtual void assign(const ElementVoid *other) { base_t::assign(other); }
+    virtual void assign(const ElementVoid *other) override final { base_t::assign(other); }
 };
 
 struct ElementBPM : public MomentElementBase
@@ -870,7 +870,7 @@ struct ElementOrbTrim : public MomentElementBase
 
     ElementOrbTrim(const Config& c) : base_t(c) {length = 0e0;}
     virtual ~ElementOrbTrim() {}
-    virtual const char* type_name() const {return "orbtrim";}
+    virtual const char* type_name() const override final {return "orbtrim";}
 
     virtual void assign(const ElementVoid *other) override final { base_t::assign(other); }
 
@@ -1056,11 +1056,11 @@ struct ElementQuad : public MomentElementBase
 
     ElementQuad(const Config& c) : base_t(c) {}
     virtual ~ElementQuad() {}
-    virtual const char* type_name() const {return "quadrupole";}
+    virtual const char* type_name() const override final {return "quadrupole";}
 
-    virtual void assign(const ElementVoid *other) { base_t::assign(other); }
+    virtual void assign(const ElementVoid *other) override final { base_t::assign(other); }
 
-    virtual void recompute_matrix(state_t& ST)
+    virtual void recompute_matrix(state_t& ST) override final
     {
         const double L = conf().get<double>("L")*MtoMM;
         const unsigned ncurve = get_flag(conf(), "ncurve", 0);
