@@ -5,7 +5,7 @@
 #include <stdexcept>
 
 #include "glps_parser.h"
-#include "flame/config.h"
+#include "flame/core/config.h"
 
 # define M_PI 3.14159265358979323846
 

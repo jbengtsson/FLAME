@@ -9,7 +9,7 @@ add_executable(example_sim
   sim.cpp
 )
 target_link_libraries(example_sim
-  flame_core
+  flame_core flame_bd
 )
 
 add_executable(example_customsim

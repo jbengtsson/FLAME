@@ -4,6 +4,7 @@
 #include <any>
 
 #include "flame/linear.h"
+#include "flame/register.h"
 #include "flame/state/vector.h"
 #include "flame/state/matrix.h"
 

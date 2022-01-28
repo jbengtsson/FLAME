@@ -7,6 +7,7 @@
 
 #include "iocshelper.h"
 #include "flame.h"
+#include "flame/register.h"
 
 SimGlobal_t SimGlobal;
 

@@ -1,7 +1,7 @@
 #include <iostream>
 
-#include "flame/config.h"
-#include "flame/base.h"
+#include "flame/core/config.h"
+#include "flame/core/base.h"
 
 # define C0           2.99792458e8
 

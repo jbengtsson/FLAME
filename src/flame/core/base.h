@@ -548,9 +548,4 @@ private:
 
 std::ostream& operator<<(std::ostream&, const Machine& m);
 
-//! Register sim_types "Vector" and "TransferMatrix"
-void registerLinear();
-//! Register sim_type "MomentMatrix"
-void registerMoment();
-
 #endif // FLAME_BASE_H

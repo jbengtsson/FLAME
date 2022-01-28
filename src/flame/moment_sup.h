@@ -2,7 +2,7 @@
 #define MOMENT2_SUP_H
 
 #include <vector>
-#include "base.h"
+#include "flame/core/base.h"
 #include "moment.h"
 
 static std::map<std::string,std::shared_ptr<Config> > CurveMap;

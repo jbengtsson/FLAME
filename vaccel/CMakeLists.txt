@@ -42,7 +42,7 @@ endif()
 
 add_library(flame ${flame_SRCS})
 target_link_libraries(flame
-  flame_core
+  flame_core flame_bd
   ${Boost_REGEX_LIBRARY}
   ${EPICS_LIBRARIES}
 )

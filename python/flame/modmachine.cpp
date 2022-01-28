@@ -1,7 +1,7 @@
 #include <climits>
 #include <sstream>
 
-#include "flame/base.h"
+#include "flame/core/base.h"
 #include "pyflame.h"
 
 

@@ -1,4 +1,5 @@
 #include <iostream>
+#include <iomanip>
 #include <fstream>
 #include <list>
 #include <vector>
@@ -13,13 +14,13 @@
 #include <boost/call_traits.hpp>
 #include <boost/lexical_cast.hpp>
 
-#include <flame/base.h>
+#include <flame/core/base.h>
 #include <flame/state/vector.h>
 #include <flame/state/matrix.h>
-#include <flame/moment.h>
+#include <flame/register.h>
 
 #ifdef USE_HDF5
-#include <flame/h5writer.h>
+#include <flame/core/h5writer.h>
 #endif
 
 namespace po = boost::program_options;

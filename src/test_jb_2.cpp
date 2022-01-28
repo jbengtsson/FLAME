@@ -7,8 +7,9 @@
 #include <boost/numeric/ublas/io.hpp>
 
 #include <flame/constants.h>
-#include <flame/base.h>
+#include <flame/core/base.h>
 #include <flame/moment.h>
+#include <flame/register.h>
 #include <flame/chg_stripper.h>
 #include <flame/state/vector.h>
 #include <flame/state/matrix.h>

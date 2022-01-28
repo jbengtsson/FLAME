@@ -8,7 +8,7 @@
 #include <boost/thread/mutex.hpp>
 // #define BOOST_FILESYSTEM_DYN_LINK
 // #include <boost/filesystem.hpp>
-#include "flame/util.h"
+#include "flame/core/util.h"
 
 void numeric_table::readvec(std::vector<double> vec, int numcol)
 {

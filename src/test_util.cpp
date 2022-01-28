@@ -4,7 +4,7 @@
 
 #include <boost/numeric/ublas/io.hpp>
 
-#include "flame/util.h"
+#include "flame/core/util.h"
 
 BOOST_AUTO_TEST_CASE(parse_table_empty)
 {

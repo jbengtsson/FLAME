@@ -2,7 +2,8 @@
 #include <list>
 #include <sstream>
 
-#include "flame/base.h"
+#include "flame/core/base.h"
+#include "flame/register.h"
 #include "pyflame.h"
 
 #define PY_ARRAY_UNIQUE_SYMBOL FLAME_PyArray_API

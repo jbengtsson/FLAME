@@ -9,7 +9,7 @@
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/numeric/ublas/io.hpp>
 
-#include "base.h"
+#include "flame/core/base.h"
 
 #include "constants.h"
 

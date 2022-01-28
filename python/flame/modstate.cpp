@@ -2,7 +2,7 @@
 #include <string>
 #include <sstream>
 
-#include "flame/base.h"
+#include "flame/core/base.h"
 #include "pyflame.h"
 
 #define NO_IMPORT_ARRAY

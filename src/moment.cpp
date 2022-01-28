@@ -11,8 +11,11 @@
 #include "flame/constants.h"
 
 #include "flame/moment.h"
+#include "flame/register.h"
+
 #include "flame/moment_sup.h"
 #include "flame/rf_cavity.h"
+#include "flame/chg_stripper.h"
 #include "flame/chg_stripper.h"
 
 #define sqr(x)  ((x)*(x))

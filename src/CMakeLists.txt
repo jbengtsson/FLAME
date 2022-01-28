@@ -31,12 +31,14 @@ set_source_files_properties(
     GENERATED TRUE
 )
 
-set(inst_HEADERS
-  flame/util.h
-  flame/base.h
-  flame/config.h
-  flame/constants.h
+set(inst_core_HEADERS
+  flame/core/util.h
+  flame/core/base.h
+  flame/core/config.h
+)
 
+set(inst_bd_HEADERS
+  flame/constants.h
   flame/state/vector.h
   flame/state/matrix.h
   flame/linear.h
@@ -48,25 +50,24 @@ set(inst_HEADERS
 
 if(USE_HDF5)
   include_directories(${HDF5_CXX_INCLUDE_DIRS})
-  set(inst_HEADERS ${inst_HEADERS}
-    flame/h5loader.h
-    flame/h5writer.h
+  set(inst_core_HEADERS ${inst_core_HEADERS}
+    flame/core/h5loader.h
+    flame/core/h5writer.h
   )
 endif()
 
-install(FILES ${inst_HEADERS}
-  DESTINATION include/flame
+install(FILES ${inst_core_HEADERS}
+  DESTINATION include/flame/core
 )
+
+install(FILES ${inst_bd_HEADERS}
+  DESTINATION include/flame/
+)
+
 
 set(flame_core_files
   base.cpp
   config.cpp
-
-  linear.cpp
-  moment.cpp
-  moment_sup.cpp
-  rf_cavity.cpp
-  chg_stripper.cpp
 
   glps_parser.cpp glps_parser.h
   glps_ops.cpp
@@ -74,6 +75,14 @@ set(flame_core_files
   glps.tab.c glps.tab.h
 
   util.cpp
+)
+
+set(flame_bd_files
+  linear.cpp
+  moment.cpp
+  moment_sup.cpp
+  rf_cavity.cpp
+  chg_stripper.cpp
 )
 
 if(USE_HDF5)
@@ -88,9 +97,18 @@ add_library(flame_core SHARED
   ${inst_HEADERS}
 )
 
+add_library(flame_bd SHARED
+  ${flame_bd_files}
+  ${inst_HEADERS}
+)
+
 target_link_libraries(flame_core
   ${Boost_THREAD_LIBRARY}
   ${Boost_SYSTEM_LIBRARY}
+  ${Boost_FILESYSTEM_LIBRARY}
+)
+
+target_link_libraries(flame_bd
   ${Boost_FILESYSTEM_LIBRARY}
 )
 
@@ -100,12 +118,12 @@ if(USE_HDF5)
   )
 endif()
 
-set_target_properties(flame_core
+set_target_properties(flame_core flame_bd
   PROPERTIES
     SOVERSION 0
 )
 
-install(TARGETS flame_core
+install(TARGETS flame_core flame_bd
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib
 )
@@ -122,7 +140,7 @@ add_executable(test_jb_2
   test_jb_2.cpp
 )
 target_link_libraries(test_jb_2
-  flame_core
+  flame_core flame_bd
 )
 
 add_executable(test_parse

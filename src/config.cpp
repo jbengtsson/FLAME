@@ -7,8 +7,8 @@
 
 // #include  <boost/variant/apply_visitor.hpp>
 #include  <boost/variant/static_visitor.hpp>
-#include <flame/config.h>
-#include <flame/util.h>
+#include <flame/core/config.h>
+#include <flame/core/util.h>
 
 #include "glps_parser.h"
 

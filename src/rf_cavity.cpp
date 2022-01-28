@@ -8,7 +8,7 @@
 #include "flame/moment.h"
 #include "flame/moment_sup.h"
 #include "flame/rf_cavity.h"
-#include "flame/config.h"
+#include "flame/core/config.h"
 
 #define sqr(x)  ((x)*(x))
 #define cube(x) ((x)*(x)*(x))

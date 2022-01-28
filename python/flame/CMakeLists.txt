@@ -17,7 +17,7 @@ install(TARGETS _internal
 )
 
 target_link_libraries(_internal
-  flame_core
+  flame_core flame_bd
   ${PYTHON_LIBRARIES}
 )
 

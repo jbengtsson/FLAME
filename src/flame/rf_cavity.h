@@ -5,8 +5,8 @@
 
 #include <boost/numeric/ublas/matrix.hpp>
 
-#include "moment.h"
-#include "util.h"
+#include "flame/moment.h"
+#include "flame/core/util.h"
 
 // Phase space dimension; including vector for orbit/1st moment.
 #define PS_Dim MomentState::maxsize // Set to 7; to include orbit.

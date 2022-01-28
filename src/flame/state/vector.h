@@ -6,7 +6,7 @@
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/storage.hpp>
 
-#include "../base.h"
+#include "flame/core/base.h"
 
 /** @brief Simulation state which include only a vector
  */

@@ -2,8 +2,9 @@
 #include <iostream>
 
 //! [includes]
-#include "flame/config.h"
-#include "flame/base.h"
+#include "flame/core/config.h"
+#include "flame/core/base.h"
+#include "flame/register.h"
 //! [includes]
 
 int main(int argc, char *argv[])

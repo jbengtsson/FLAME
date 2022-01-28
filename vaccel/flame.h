@@ -19,7 +19,7 @@
 #include <recGbl.h>
 #include <alarm.h>
 
-#include "flame/base.h"
+#include "flame/core/base.h"
 
 typedef epicsGuard<epicsMutex> Guard;
 typedef epicsGuardRelease<epicsMutex> UnGuard;
