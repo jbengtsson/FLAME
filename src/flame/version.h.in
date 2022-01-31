@@ -1,0 +1,13 @@
+#ifndef FLAME_VERSION_H
+#define FLAME_VERSION_H
+
+namespace flame{
+    const int
+	version_major = @FLAME_VERSION_MAJOR@,
+	version_minor = @FLAME_VERSION_MINOR@,
+	version_patch_level = @FLAME_VERSION_PATCH@,
+	version_decimal = @FLAME_VERSION_DECIMAL@;
+
+    const char compiled_version[] = "@FLAME_VERSION@";
+};
+#endif // FLAME_VERSION_H

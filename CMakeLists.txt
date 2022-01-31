@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.0.0)
 
-project("flame" C CXX)
+project("flame" LANGUAGES C CXX)
 
 option(USE_WERROR "Treat warnings as errors" OFF)
 option(USE_PYTHON "Build python support" ON)
@@ -11,6 +11,24 @@ option(NEED_DEMOIOC  "build flamedemo IOC executable" ON)
 
 message(STATUS "Option PYTHON ${USE_PYTHON}")
 message(STATUS "Option HDF5 ${USE_HDF5}")
+
+
+set(FLAME_VERSION 1.8.6)
+if(FLAME_VERSION MATCHES "^([0-9]+)\\.([0-9]+)\\.([0-9]+)")
+  set(FLAME_VERSION_MAJOR "${CMAKE_MATCH_1}")
+  set(FLAME_VERSION_MINOR "${CMAKE_MATCH_2}")
+  set(FLAME_VERSION_PATCH "${CMAKE_MATCH_3}")
+  math(EXPR FLAME_VERSION_DECIMAL
+    "${FLAME_VERSION_MAJOR}*1000000 + ${FLAME_VERSION_MINOR}*1000 + ${FLAME_VERSION_PATCH}")
+else()
+  message(FATAL_ERROR "Failed to parse FLAME_VERSION='${FLAME_VERSION}'")
+endif()
+
+
+# specify the C++ standard
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+
 
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE RELEASE) # default to debug build

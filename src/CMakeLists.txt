@@ -1,9 +1,3 @@
-include_directories(
-  ${Boost_INCLUDE_DIRS}
-  ${CMAKE_CURRENT_SOURCE_DIR}
-  ${CMAKE_CURRENT_BINARY_DIR}
-)
-
 add_custom_command(
   OUTPUT glps.par.c glps.par.h
   COMMAND ${YACC_EXECUTABLE}
@@ -24,20 +18,22 @@ add_custom_command(
   MAIN_DEPENDENCY ${CMAKE_CURRENT_SOURCE_DIR}/glps.l
 )
 
+configure_file(flame/version.h.in flame/version.h @ONLY)
+
 set_source_files_properties(
     glps.par.c glps.par.h
     glps.tab.c glps.tab.h
-  PROPERTIES
+    PROPERTIES
     GENERATED TRUE
 )
 
-set(inst_core_HEADERS
+set(flame_core_HEADERS
   flame/core/util.h
   flame/core/base.h
   flame/core/config.h
 )
 
-set(inst_bd_HEADERS
+set(flame_bd_HEADERS
   flame/constants.h
   flame/state/vector.h
   flame/state/matrix.h
@@ -50,20 +46,19 @@ set(inst_bd_HEADERS
 
 if(USE_HDF5)
   include_directories(${HDF5_CXX_INCLUDE_DIRS})
-  set(inst_core_HEADERS ${inst_core_HEADERS}
+  set(flame_core_HEADERS ${flame_core_HEADERS}
     flame/core/h5loader.h
     flame/core/h5writer.h
   )
 endif()
 
-install(FILES ${inst_core_HEADERS}
-  DESTINATION include/flame/core
+set(flame_HEADERS
+  ${CMAKE_CURRENT_BINARY_DIR}/flame/version.h
 )
 
-install(FILES ${inst_bd_HEADERS}
-  DESTINATION include/flame/
+set(flame_files
+  version.cpp
 )
-
 
 set(flame_core_files
   base.cpp
@@ -92,14 +87,46 @@ if(USE_HDF5)
   )
 endif()
 
+
+include(GNUInstallDirs)
+include(CMakePackageConfigHelpers)
+
+include_directories(
+  ${Boost_INCLUDE_DIRS}
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_BINARY_DIR}
+)
+
+add_library(flame SHARED
+  ${flame_files}
+  ${flame_HEADERS}
+)
+
 add_library(flame_core SHARED
   ${flame_core_files}
-  ${inst_HEADERS}
+  ${flame_core_HEADERS}
 )
 
 add_library(flame_bd SHARED
   ${flame_bd_files}
-  ${inst_HEADERS}
+  ${flame_bd_HEADERS}
+)
+
+
+add_library(flame::core ALIAS flame_core)
+add_library(flame::bd ALIAS flame_bd)
+
+
+target_include_directories(flame_core
+    PUBLIC
+    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/>"
+    "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
+)
+
+target_include_directories(flame_bd
+    PUBLIC
+    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/>"
+    "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
 )
 
 target_link_libraries(flame_core
@@ -118,14 +145,90 @@ if(USE_HDF5)
   )
 endif()
 
-set_target_properties(flame_core flame_bd
+set_target_properties(flame_core
   PROPERTIES
     SOVERSION 0
 )
 
-install(TARGETS flame_core flame_bd
-  LIBRARY DESTINATION lib
-  ARCHIVE DESTINATION lib
+set_target_properties(flame_bd
+  PROPERTIES
+    SOVERSION 0
+)
+
+
+set(FLAME_CMAKE_CONFIG_DIR "${CMAKE_INSTALL_DATADIR}/flame/cmake")
+set(FLAME_CMAKE_LIB_DIR "${CMAKE_INSTALL_LIBDIR}/cmake/flame")
+
+# -- core --library part
+install(FILES ${flame_core_HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/flame/core)
+install(TARGETS flame_core
+        EXPORT flame_coreTargets
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+        INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+)
+# generate and install export file
+install(EXPORT flame_coreTargets
+        FILE flamecoreTargets.cmake
+        NAMESPACE flame::
+	DESTINATION ${FLAME_CMAKE_LIB_DIR}
+)
+# -- end core --library part
+
+# -- bd --library part
+install(FILES ${flame_bd_HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/flame/)
+install(TARGETS flame_bd
+        EXPORT flamebdTargets
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+        INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+)
+# generate and install export file
+install(EXPORT flamebdTargets
+        FILE flamebdTargets.cmake
+        NAMESPACE flame::
+	DESTINATION ${FLAME_CMAKE_LIB_DIR}
+)
+# -- end bd --library part
+
+
+configure_package_config_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/flameConfig.cmake.in
+    "${CMAKE_CURRENT_BINARY_DIR}/flameConfig.cmake"
+    INSTALL_DESTINATION ${FLAME_CMAKE_LIB_DIR}
+)
+
+write_basic_package_version_file(
+    ${CMAKE_CURRENT_BINARY_DIR}/flameConfigVersion.cmake
+    VERSION "${FLAME_VERSION}"
+    COMPATIBILITY SameMajorVersion
+)
+
+
+
+# install(DIRECTORY include/flame DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+install(FILES ${flame_HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+install(TARGETS flame
+        EXPORT flameTargets
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+        INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+)
+
+install(
+    EXPORT flameTargets
+    FILE flameTargets.cmake
+    DESTINATION ${FLAME_CMAKE_LIB_DIR}
+    NAMESPACE flame::
+)
+
+install(FILES
+         "${CMAKE_CURRENT_BINARY_DIR}/flameConfig.cmake"
+         "${CMAKE_CURRENT_BINARY_DIR}/flameConfigVersion.cmake"
+	 DESTINATION ${FLAME_CMAKE_LIB_DIR}
 )
 
 

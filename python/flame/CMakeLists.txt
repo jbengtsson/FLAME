@@ -5,6 +5,8 @@ include_directories(
 )
 find_package(PythonLibs REQUIRED)
 
+configure_file(_version.py.in _version.py @ONLY)
+
 add_library(_internal SHARED
   modmain.cpp
   modconfig.cpp

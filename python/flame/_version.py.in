@@ -1,0 +1,6 @@
+"""
+
+Todo:
+    Update to package metadata
+"""
+__version__ = "@FLAME_VERSION@"

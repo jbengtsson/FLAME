@@ -1,6 +1,7 @@
 
 from collections import OrderedDict
 
+from ._version import __version__
 from ._internal import (Machine as MachineBase,
                         GLPSPrinter, _GLPSParse,
                         _pyapi_version, _capi_version,
@@ -47,5 +48,3 @@ __all__ = ['Machine',
     'GLPSPrinter',
     'GLPSParser',
 ]
-
-__version__ = '1.8.6'

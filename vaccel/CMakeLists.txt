@@ -24,7 +24,7 @@ include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/../src
 )
 
-list(APPEND flame_SRCS
+list(APPEND flame_vaccel_SRCS
   flame.cpp
   flamedev.cpp
   flameelem.cpp
@@ -40,9 +40,11 @@ if(pvData_FOUND AND pvAccess_FOUND AND pva2pva_FOUND)
   )
 endif()
 
-add_library(flame ${flame_SRCS})
-target_link_libraries(flame
-  flame_core flame_bd
+add_library(flame_vaccel ${flame_vaccel_SRCS})
+add_library(flame::vaccel ALIAS flame_vaccel)
+
+target_link_libraries(flame_vaccel
+  flame flame_core flame_bd
   ${Boost_REGEX_LIBRARY}
   ${EPICS_LIBRARIES}
 )
@@ -54,7 +56,7 @@ endif()
 
 epics_install(
   PREFIX lib/epics/
-  LIBS flame
+  LIBS flame_vaccel flame_core flame_bd
   DBDS flameSupport.dbd
 )
 
