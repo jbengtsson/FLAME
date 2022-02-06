@@ -20,6 +20,7 @@ set(_supported_components core bd)
 # A current hack .. why still needed ?
 set(flame_FOUND TRUE)
 message(STATUS "flame_found ${flame_FOUND}")
+
 # How to specify the include directory ?
 get_filename_component(flame_INCLUDE_DIR "${CMAKE_CURRENT_LIST_DIR}/../../../include/" ABSOLUTE)
 
