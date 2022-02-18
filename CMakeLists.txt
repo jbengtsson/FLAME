@@ -3,11 +3,11 @@ cmake_minimum_required(VERSION 3.0.0)
 project("flame" LANGUAGES C CXX)
 
 option(USE_WERROR "Treat warnings as errors" OFF)
-option(USE_PYTHON "Build python support" ON)
+option(USE_PYTHON "Build python support" OFF)
 option(USE_HDF5 "HDF5 output support" OFF)
 option(NEED_PYTHON "Require python support" OFF)
 option(NEED_EPICS  "Require EPICS support" OFF)
-option(NEED_DEMOIOC  "build flamedemo IOC executable" ON)
+option(NEED_DEMOIOC  "build flamedemo IOC executable" OFF)
 
 message(STATUS "Option PYTHON ${USE_PYTHON}")
 message(STATUS "Option HDF5 ${USE_HDF5}")
