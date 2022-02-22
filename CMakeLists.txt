@@ -37,7 +37,33 @@ endif()
 
 if(CMAKE_COMPILER_IS_GNUCC)
   # Turn on extra GCC warnings
-  add_definitions(-Wall -Wextra -Wno-unused-parameter -Wno-missing-field-initializers)
+  add_definitions(-pedantic -Wall -Wextra -Wno-unused-parameter -Wno-missing-field-initializers)
+  add_definitions(-g -ggdb)
+  add_definitions(
+  	-Wcast-align
+  	-Wcast-qual
+  ##	-Wctor-dtor-privacy
+  ##	-Wdisabled-optimization
+  ##	-Wformat=2
+  ##	-Winit-self
+  ##	-Wlogical-op
+  ##	-Wnoexcept
+  ##	# -Wold-style-cast
+  	-Woverloaded-virtual
+  	-Wredundant-decls
+  ##	# -Wshadow
+  ##	-Wsign-promo
+  ##	-Wstrict-null-sentinel
+  ##	-Wstrict-overflow=5
+  ##	-Wswitch-default
+  ##	-Wundef
+  ##	-Wno-unused
+  ## 	-Wmissing-declarations
+  ## 	#-Weffc++
+  )
+
+  # not compatible with boost
+  # add_definitions(-D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC -g -ggdb -pedantic -Wall)
   if(USE_WERROR)
     add_definitions(-Werror)
   endif()

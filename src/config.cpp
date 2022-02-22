@@ -216,7 +216,7 @@ struct store_ctxt_var : public boost::static_visitor<void>
     VISIT(const std::string&, glps_expr_string)
     VISIT(const std::vector<double>&, glps_expr_vector)
 #undef VISIT
-    void operator()(const Config::vector_t&) const
+    void operator()(const Config::vector_t&) const noexcept
     {
         // ignore
     }
@@ -455,7 +455,7 @@ struct glps_show_props : public boost::static_visitor<void>
         strm << "]";
     }
 
-    void operator()(const Config::vector_t& v) const
+    void operator()(const Config::vector_t& v) const noexcept
     {
         // ignore
     }

@@ -226,7 +226,7 @@ public:
     void flatten();
 };
 
-IS_CONFIG_VALUE(std::vector<Config>);
+IS_CONFIG_VALUE(std::vector<Config>)
 
 inline
 std::ostream& operator<<(std::ostream& strm, const Config& c)

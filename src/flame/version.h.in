@@ -9,5 +9,5 @@ namespace flame{
 	version_decimal = @FLAME_VERSION_DECIMAL@;
 
     const char compiled_version[] = "@FLAME_VERSION@";
-};
+}
 #endif // FLAME_VERSION_H
