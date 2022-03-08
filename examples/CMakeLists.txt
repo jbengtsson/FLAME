@@ -5,12 +5,14 @@ include_directories(
   ${HDF5_CXX_INCLUDE_DIRS}
 )
 
-add_executable(example_sim
-  sim.cpp
-)
-target_link_libraries(example_sim
-  flame_core flame_bd
-)
+if(NOT MSYS)
+     add_executable(example_sim
+       sim.cpp
+     )
+     target_link_libraries(example_sim
+       flame_core flame_bd
+     )
+endif()
 
 add_executable(example_customsim
   customsim.cpp

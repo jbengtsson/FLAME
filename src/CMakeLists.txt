@@ -61,8 +61,8 @@ set(flame_files
 )
 
 set(flame_core_files
-  base.cpp
   config.cpp
+  base.cpp
 
   glps_parser.cpp glps_parser.h
   glps_ops.cpp
@@ -88,6 +88,11 @@ if(USE_HDF5)
 endif()
 
 
+if(MSYS)
+   # msys / m$ requires the use of dllexport when using the library
+   # but not during build
+   add_definitions(-DFLAME_BUILD_LIB)
+endif()
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
 
@@ -100,42 +105,24 @@ include_directories(
 add_library(flame SHARED
   ${flame_files}
   ${flame_HEADERS}
-)
+ )
 
 add_library(flame_core SHARED
   ${flame_core_files}
   ${flame_core_HEADERS}
 )
 
-add_library(flame_bd SHARED
-  ${flame_bd_files}
-  ${flame_bd_HEADERS}
-)
 
 
 add_library(flame::core ALIAS flame_core)
-add_library(flame::bd ALIAS flame_bd)
-
-
 target_include_directories(flame_core
     PUBLIC
     "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/>"
     "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
 )
-
-target_include_directories(flame_bd
-    PUBLIC
-    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/>"
-    "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
-)
-
 target_link_libraries(flame_core
   ${Boost_THREAD_LIBRARY}
   ${Boost_SYSTEM_LIBRARY}
-  ${Boost_FILESYSTEM_LIBRARY}
-)
-
-target_link_libraries(flame_bd
   ${Boost_FILESYSTEM_LIBRARY}
 )
 
@@ -150,11 +137,27 @@ set_target_properties(flame_core
     SOVERSION 0
 )
 
-set_target_properties(flame_bd
-  PROPERTIES
-    SOVERSION 0
-)
 
+if(NOT MSYS)
+    add_library(flame_bd SHARED
+      ${flame_bd_files}
+      ${flame_bd_HEADERS}
+    )
+    add_library(flame::bd ALIAS flame_bd)
+
+    target_include_directories(flame_bd
+        PUBLIC
+        "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/>"
+        "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
+    )
+    target_link_libraries(flame_bd
+      ${Boost_FILESYSTEM_LIBRARY}
+    )
+    set_target_properties(flame_bd
+      PROPERTIES
+        SOVERSION 0
+    )
+endif()
 
 set(FLAME_CMAKE_CONFIG_DIR "${CMAKE_INSTALL_DATADIR}/flame/cmake")
 set(FLAME_CMAKE_LIB_DIR "${CMAKE_INSTALL_LIBDIR}/cmake/flame")
@@ -172,25 +175,27 @@ install(TARGETS flame_core
 install(EXPORT flame_coreTargets
         FILE flamecoreTargets.cmake
         NAMESPACE flame::
-	DESTINATION ${FLAME_CMAKE_LIB_DIR}
+        DESTINATION ${FLAME_CMAKE_LIB_DIR}
 )
 # -- end core --library part
 
 # -- bd --library part
-install(FILES ${flame_bd_HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/flame/)
-install(TARGETS flame_bd
-        EXPORT flamebdTargets
-        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-        INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-)
-# generate and install export file
-install(EXPORT flamebdTargets
-        FILE flamebdTargets.cmake
-        NAMESPACE flame::
-	DESTINATION ${FLAME_CMAKE_LIB_DIR}
-)
+if(NOT MSYS)
+    install(FILES ${flame_bd_HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/flame/)
+    install(TARGETS flame_bd
+            EXPORT flamebdTargets
+            LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+            ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+            RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+            INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+    )
+    # generate and install export file
+    install(EXPORT flamebdTargets
+            FILE flamebdTargets.cmake
+            NAMESPACE flame::
+            DESTINATION ${FLAME_CMAKE_LIB_DIR}
+    )
+endif()
 # -- end bd --library part
 
 
@@ -239,12 +244,14 @@ target_link_libraries(test_lex
   flame_core
 )
 
-add_executable(test_jb_2
-  test_jb_2.cpp
-)
-target_link_libraries(test_jb_2
-  flame_core flame_bd
-)
+if(NOT MSYS)
+    add_executable(test_jb_2
+      test_jb_2.cpp
+    )
+    target_link_libraries(test_jb_2
+      flame_core flame_bd
+    )
+endif()
 
 add_executable(test_parse
   test_parse.cpp

@@ -1,6 +1,19 @@
 #ifndef FLAME_CONFIG_H
 #define FLAME_CONFIG_H
 
+// requires to define FLAME_BUILD_LIB when building library
+// #define FLAME_BUILD_LIB
+#if defined(__WIN32__) && !defined(__CYGWIN__)  && !defined(FLAME_BUILD_LIB)
+#  if (defined(_MSC_VER) || defined(__MINGW32__)) && defined(BUILD_DLL)
+#    define FALMEAPI __declspec(dllexport)
+#  elif (defined(_MSC_VER) || defined(__MINGW32__))
+#    define FLAMEAPI __declspec(dllimport)
+#  endif
+#else
+#   define FLAMEAPI
+#endif
+
+
 #include <stdio.h>
 
 #ifdef __cplusplus

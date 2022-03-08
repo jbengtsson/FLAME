@@ -386,7 +386,7 @@ GLPSParser::parse_file(const char *fname, const bool have_lattice)
         throw std::runtime_error(strm.str());
     }
     try{
-        Config *ret = parse_file(have_lattice, fp, fpath.native().c_str());
+        Config *ret = parse_file(have_lattice, fp, fpath.string().c_str());
         if(closeme) fclose(fp);
         return ret;
     }catch(...){
@@ -500,7 +500,7 @@ struct glps_show : public boost::static_visitor<void>
 };
 }
 
-void GLPSPrint(std::ostream& strm, const Config& conf)
+FLAMEAPI void GLPSPrint(std::ostream& strm, const Config& conf)
 {
     // print variables
     for(Config::const_iterator it=conf.begin(), end=conf.end();

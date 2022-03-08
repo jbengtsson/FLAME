@@ -147,7 +147,7 @@ int unary_parse(parse_context* ctxt, expr_value_t *R, const expr_t * const *A)
     GLPSParser P;
     P.setPrinter(ctxt->printer);
 
-    std::shared_ptr<Config> ret(P.parse_file(name.native().c_str()));
+    std::shared_ptr<Config> ret(P.parse_file(name.string().c_str()));
     *R = ret;
     return 0;
 }
@@ -166,7 +166,7 @@ int unary_file(parse_context* ctxt, expr_value_t *R, const expr_t * const *A)
         return 1;
     }
 
-    *R = ret.native();
+    *R = ret.string();
     return 0;
 }
 
@@ -190,7 +190,7 @@ int unary_h5file(parse_context* ctxt, expr_value_t *R, const expr_t * const *A)
         path fname(absolute(inp.substr(0, sep), ctxt->cwd));
 
         if(exists(fname)) {
-            *R = canonical(fname).native() + inp.substr(sep);
+            *R = canonical(fname).string() + inp.substr(sep);
             return 0;
         } else if(sep==inp.npos) {
             break;
