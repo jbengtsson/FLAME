@@ -1,31 +1,20 @@
-add_custom_command(
-  OUTPUT glps.par.c glps.par.h
-  COMMAND ${YACC_EXECUTABLE}
-  ARGS
-    -o glps.par.c
-    --defines=glps.par.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/glps.y
-  MAIN_DEPENDENCY ${CMAKE_CURRENT_SOURCE_DIR}/glps.y
-)
 
-add_custom_command(
-  OUTPUT glps.tab.c glps.tab.h
-  COMMAND ${LEX_EXECUTABLE}
-  ARGS
-    -o glps.tab.c
-    --header-file=glps.tab.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/glps.l
-  MAIN_DEPENDENCY ${CMAKE_CURRENT_SOURCE_DIR}/glps.l
-)
-
+# Bison in current binary directory
+set(CMP0088 NEW)
+# flex in current binary directory
+set(CMP0098 NEW)
+BISON_TARGET(LatticeParser glps.y ${CMAKE_CURRENT_BINARY_DIR}/glps.par.c DEFINES_FILE ${CMAKE_CURRENT_BINARY_DIR}/glps.par.h)
+FLEX_TARGET(LatticeScanner glps.l ${CMAKE_CURRENT_BINARY_DIR}/glps.tab.c DEFINES_FILE ${CMAKE_CURRENT_BINARY_DIR}/glps.tab.h)
+ADD_FLEX_BISON_DEPENDENCY(LatticeScanner LatticeParser)
 configure_file(flame/version.h.in flame/version.h @ONLY)
 
-set_source_files_properties(
-    glps.par.c glps.par.h
-    glps.tab.c glps.tab.h
-    PROPERTIES
-    GENERATED TRUE
-)
+# set_source_files_properties(
+#    glps.par.c glps.par.h
+#    glps.tab.c glps.tab.h
+#    PROPERTIES
+#    GENERATED TRUE
+# )
+
 
 set(flame_core_HEADERS
   flame/core/util.h
@@ -104,6 +93,8 @@ include_directories(
 
 add_library(flame SHARED
   ${flame_files}
+  ${BISON_MyParser_OUTPUTS}
+  ${FLEX_MyScanner_OUTPUTS}
   ${flame_HEADERS}
  )
 

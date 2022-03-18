@@ -80,7 +80,7 @@ void glps_string_debug(FILE *fp, const string_t *s)
 
 void glps_expr_debug(FILE *fp, const expr_t *E)
 {
-    fprintf(fp, "%p type %s", E, glps_expr_type_name(E->etype));
+  fprintf(fp, "%p type %s", (const void *)E, glps_expr_type_name(E->etype));
     if(E->etype==glps_expr_line) {
         try{
             const strlist_t::list_t& L(std::get<strlist_t::list_t>(E->value));

@@ -100,18 +100,8 @@ if(USE_HDF5)
   add_definitions(-DUSE_HDF5)
 endif()
 
-find_program(LEX_EXECUTABLE flex
-  DOC "Location of lexer genereator"
-)
-find_program(YACC_EXECUTABLE bison
-  DOC "Location of parser generator"
-)
-message(STATUS "FLEX ${LEX_EXECUTABLE}")
-message(STATUS "BISON ${YACC_EXECUTABLE}")
-
-if(NOT LEX_EXECUTABLE OR NOT YACC_EXECUTABLE)
-  message(SEND_ERROR "Missing flex or bison")
-endif()
+find_package(FLEX)
+find_package(BISON 3)
 
 find_program(CPPCHECK_EXECUTABLE cppcheck
   DOC "cppcheck executable"

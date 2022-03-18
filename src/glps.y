@@ -41,19 +41,19 @@ void yyerror (yacc_arg arg, const char* msg)
 %destructor { glps_vector_cleanup($$); } <vector>
 %type <vector> expr_list vector
 
-%printer { fprintf(yyoutput, "%p", $$); } expr_list vector;
+%printer { fprintf(yyoutput, "%p", (void *)$$); } expr_list vector;
 
 %union { kvlist_t *kvlist; }
 %destructor { glps_kvlist_cleanup($$); } <kvlist>
 %type <kvlist> properties
 
-%printer { fprintf(yyoutput, "%p", $$); } properties;
+%printer { fprintf(yyoutput, "%p", (void *)$$); } properties;
 
 %union { strlist_t *strlist; }
 %destructor { glps_strlist_cleanup($$); } <strlist>
 %type <strlist> line_list
 
-%printer { fprintf(yyoutput, "%p", $$); } line_list;
+%printer { fprintf(yyoutput, "%p", (void *)$$); } line_list;
 
 %union { kv_t kv; }
 %destructor { free($$.key); $$.key = NULL;glps_expr_cleanup($$.value); } <kv>
