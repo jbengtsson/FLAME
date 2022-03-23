@@ -198,6 +198,16 @@ Config::show(std::ostream& strm, unsigned indent) const
     }
 }
 
+std::string
+Config::repr(void) const
+{
+    std::stringstream strm;
+    strm << "<" << "Config" << " @ " << (const void *)(this) << ">(";
+    this->show(strm, 0);
+    strm << ")";
+    return strm.str();
+}
+
 namespace {
 // store variable definitions in parser context
 struct store_ctxt_var : public boost::static_visitor<void>

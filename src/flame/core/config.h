@@ -221,6 +221,8 @@ public:
     //! Print listing of inner scope
     void show(std::ostream&, unsigned indent=0) const;
 
+    //! support for python
+    std::string repr(void) const;
     //! iterator
     typedef values_t::iterator iterator;
     //! const_iterator
