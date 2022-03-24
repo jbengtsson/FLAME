@@ -67,7 +67,8 @@ Config::getAny(const std::string& name) const
         it = implicit_values->find(name);
         if(it!=implicit_values->end()) return it->second;
     }
-    throw key_error(SB()<<"Missing parameter '"<<name<<"'");
+    // abort();
+    throw key_error(SB()<<"Config.getAny: missing parameter '"<<name<<"'");
 }
 void
 Config::setAny(const std::string& name, const value_t& val)
