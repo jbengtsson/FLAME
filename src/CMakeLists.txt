@@ -142,6 +142,7 @@ if(NOT MSYS)
         "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
     )
     target_link_libraries(flame_bd
+      flame::core
       ${Boost_FILESYSTEM_LIBRARY}
     )
     set_target_properties(flame_bd
