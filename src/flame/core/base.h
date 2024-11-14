@@ -222,7 +222,7 @@ struct ElementVoid : public boost::noncopyable
 private:
     Observer *p_observe;
     Config p_conf;
-    friend class Machine;
+    friend struct Machine;
 };
 
 /**
